@@ -31,6 +31,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
     self.log("Running socket thread")
     do {
       let socket = try Socket.create()
+      socket.readBufferSize = 65535
       try socket.listen(on: 19222)
       var count = 0
       repeat {
@@ -48,13 +49,17 @@ class ViewController: UIViewController, WKNavigationDelegate {
   }
   
   func pumpSocket(_ socket:Socket, _ id:Int) {
-    var data = Data(capacity: 65535)
     var cont = true
+    do {
+      try socket.setReadTimeout(value: 10000)
+    } catch let err {
+      self.log("\(id): Socket Read timeout error: \(err)")
+    }
     repeat {
       do {
-        let length = try socket.read(into: &data)
-        if length > 0 {
-          self.receivedRawData(id:id, length:length, data:data)
+        let str = try socket.readString()
+        if (str != nil) {
+          self.receivedRawData(id:id, str:str!)
         }
       } catch let err {
         self.log("\(id): Socket Read error: \(err)")
@@ -62,22 +67,22 @@ class ViewController: UIViewController, WKNavigationDelegate {
       }
     } while cont
     socket.close()
+    self.log("\(id): Socket closed")
   }
   
-  func receivedRawData(id:Int, length:Int, data:Data) {
-    self.log("\(id): Received \(length) bytes")
-    if let str = String(data:data, encoding: .utf8) {
-      for (_, ch) in str.characters.enumerated() {
-        if ch == "\n" {
-          if buffer_in.characters.count > 0 {
-            DispatchQueue.main.async {
-              self.handleMessage(self.buffer_in)
-            }
-            self.buffer_in = ""
+  func receivedRawData(id:Int, str:String) {
+    self.log("\(id): Received \(str.characters.count) bytes: \(str)")
+    for (_, ch) in str.characters.enumerated() {
+      if ch == "\n" {
+        if buffer_in.characters.count > 0 {
+          let message = self.buffer_in
+          self.buffer_in = ""
+          DispatchQueue.main.async {
+            self.handleMessage(message)
           }
-        } else {
-          buffer_in.append(ch)
         }
+      } else {
+        buffer_in.append(ch)
       }
     }
   }
