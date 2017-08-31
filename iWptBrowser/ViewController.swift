@@ -43,6 +43,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    self.edgesForExtendedLayout = []
     let queue = DispatchQueue(label: "org.webpagetest.socketlisten", attributes: .concurrent)
     queue.async {
       self.socketListenThread()
@@ -88,13 +89,9 @@ class ViewController: UIViewController, WKNavigationDelegate {
       self.closeBrowser()
     }
     webView = WKWebView()
-    self.view.addSubview(webView!)
     webView!.frame = self.view.bounds
-    webView!.autoresizingMask = UIViewAutoresizing.flexibleWidth
-    webView!.translatesAutoresizingMaskIntoConstraints = true
-    webView!.didMoveToSuperview()
+    self.view.addSubview(webView!)
     webView!.loadHTMLString(startPage, baseURL: URL(string: "http://www.webpagetest.org"))
-    webView!.evaluateJavaScript(showOrange)
     webView!.navigationDelegate = self
   }
   
