@@ -8,10 +8,27 @@
 import WebKit
 import UIKit
 
+extension String {
+  func base64Encoded() -> String? {
+    if let data = self.data(using: .utf8) {
+      return data.base64EncodedString()
+    }
+    return nil
+  }
+  
+  func base64Decoded() -> String? {
+    if let data = Data(base64Encoded: self) {
+      return String(data: data, encoding: .utf8)
+    }
+    return nil
+  }
+}
+
 class ViewController: UIViewController, WKNavigationDelegate {
   var webView: WKWebView?
   var clientSocket:Socket?
   var buffer_in = ""
+  var hasOrange = false
   let startPage = "<html>\n" +
                   "<head>\n" +
                   "<style>\n" +
@@ -43,6 +60,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    self.view.backgroundColor = UIColor.black
+    title = "iWptBrowser"
     self.edgesForExtendedLayout = []
     let queue = DispatchQueue(label: "org.webpagetest.socketlisten", attributes: .concurrent)
     queue.async {
@@ -51,65 +70,137 @@ class ViewController: UIViewController, WKNavigationDelegate {
   }
   
   func handleMessage(_ message:String) {
-    self.log("<< \(message)")
-    let parts = message.components(separatedBy: " ")
-    if parts.count >= 2 {
-      let id = parts[0]
-      let message = parts[1].lowercased()
-      var response = "OK"
+    self.log("<< \(message.replacingOccurrences(of: "\t", with: " "))")
+    let parts = message.components(separatedBy: "\t")
+    if parts.count >= 1 {
+      var id = ""
+      var message = ""
+      let idParts = parts[0].components(separatedBy: ":")
+      if idParts.count > 1 {
+        id = idParts[0]
+        message = idParts[1].lowercased()
+      } else {
+        message = idParts[0].lowercased()
+      }
+      var data:String?
+      if parts.count > 1 {
+        data = parts[1]
+      }
+      let messageParts = message.components(separatedBy: ".")
+      if messageParts.count > 1 {
+        message = messageParts[0]
+        for i in 1..<messageParts.count {
+          switch messageParts[i] {
+            case "encoded":
+              if data != nil {
+                data = data!.base64Decoded()
+              }
+            default:
+              self.log("Unknown command option: \(messageParts[i])")
+          }
+        }
+      }
       switch message {
-        case "clearcache":
-          clearCache()
-        case "startbrowser":
-          startBrowser()
-        case "closebrowser":
-          closeBrowser()
+        case "clearcache": clearCache(id:id)
+        case "startbrowser": startBrowser(id:id)
+        case "closebrowser", "stopbrowser": closeBrowser(id:id)
         case "navigate":
-          if parts.count >= 3 {
-            let url = parts[2]
-            navigate(url)
+          if data != nil {
+            navigate(id:id, to:data!)
           } else {
-            response = "ERROR"
+            sendMessage(id:id, message:"ERROR", data:"Missing URL for navigation")
+          }
+        case "addorange", "setorange": addOrange(id:id)
+        case "exec":
+          if data != nil {
+            execScript(id:id, script:data!)
+          } else {
+            sendMessage(id:id, message:"ERROR", data:"Missing script for exec")
           }
         default:
-          response = "ERROR"
+          sendMessage(id:id, message:"ERROR", data:"Unknown command: \(message)")
       }
-      sendMessage(id:id, message:response)
     }
   }
   
   /*************************************************************************************
                                   browser operations
    *************************************************************************************/
-  func clearCache() {
+  func clearCache(id:String) {
+    sendMessage(id:id, message:"OK")
   }
   
-  func startBrowser() {
-    if webView != nil {
-      self.closeBrowser()
-    }
-    webView = WKWebView()
-    webView!.frame = self.view.bounds
-    self.view.addSubview(webView!)
-    webView!.loadHTMLString(startPage, baseURL: URL(string: "http://www.webpagetest.org"))
-    webView!.navigationDelegate = self
-  }
-  
-  func closeBrowser() {
+  func startBrowser(id:String) {
     if webView != nil {
       webView!.navigationDelegate = nil
       webView!.removeFromSuperview()
       webView = nil
     }
+    webView = WKWebView()
+    webView!.frame = self.view.bounds
+    self.view.addSubview(webView!)
+    webView!.loadHTMLString(startPage, baseURL: URL(string: "http://www.webpagetest.org"))
+    hasOrange = true
+    webView!.navigationDelegate = self
+    title = ""
+    sendMessage(id:id, message:"OK")
   }
   
-  func navigate(_ to:String) {
+  func closeBrowser(id:String) {
+    if webView != nil {
+      webView!.navigationDelegate = nil
+      webView!.removeFromSuperview()
+      webView = nil
+    }
+    hasOrange = false
+    title = "iWptBrowser"
+    sendMessage(id:id, message:"OK")
+  }
+  
+  func navigate(id:String, to:String) {
     if webView != nil {
       var url = to
       if !url.hasPrefix("http") {
         url = "http://" + url
       }
+      title = "Loading..."
       webView!.load(URLRequest(url: URL(string:url)!))
+      sendMessage(id:id, message:"OK")
+    } else {
+      sendMessage(id:id, message:"ERROR", data:"Browser not started")
+    }
+  }
+  
+  func addOrange(id:String) {
+    if webView != nil {
+      webView!.evaluateJavaScript(showOrange) { (result, error) in
+        self.sendMessage(id:id, message:"OK")
+      }
+    } else {
+      sendMessage(id:id, message:"ERROR", data:"Browser not started")
+    }
+  }
+  
+  func execScript(id:String, script:String) {
+    if webView != nil {
+      webView!.evaluateJavaScript(script) { (result, error) in
+        var ok = "OK"
+        var returned = ""
+        if error != nil {
+          ok = "ERROR"
+          returned = "\(error!)"
+        }
+        if result != nil {
+          returned = "\(result!)"
+        }
+        if returned.range(of: "\t") != nil {
+          ok += ".encoded"
+          returned = returned.base64Encoded()!
+        }
+        self.sendMessage(id:id, message:ok, data:returned)
+      }
+    } else {
+      sendMessage(id:id, message:"ERROR", data:"Browser not started")
     }
   }
   
@@ -118,13 +209,22 @@ class ViewController: UIViewController, WKNavigationDelegate {
    *************************************************************************************/
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
     title = webView.title
-    self.sendNotification(message: "navigate:end")
+    self.sendNotification(message: "page.didFinish")
   }
   
   func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
     let url = navigationAction.request.url!
-    self.sendNotification(message: "navigate:start", data:url.absoluteString)
-    webView.evaluateJavaScript(hideOrange) { (result, error) in
+    if navigationAction.targetFrame == nil || navigationAction.targetFrame!.isMainFrame {
+      self.sendNotification(message: "page.navigateStart", data:url.absoluteString)
+      if hasOrange {
+        webView.evaluateJavaScript(hideOrange) { (result, error) in
+          decisionHandler(.allow)
+        }
+      } else {
+        decisionHandler(.allow)
+      }
+    } else {
+      self.sendNotification(message: "page.navigateFrameStart", data:url.absoluteString)
       decisionHandler(.allow)
     }
   }
@@ -133,11 +233,11 @@ class ViewController: UIViewController, WKNavigationDelegate {
                                 Agent socket interface
    *************************************************************************************/
   func sendNotification(message:String) {
-    sendMessage(id:"0", message:message, data:"")
+    sendMessage(id:"", message:message, data:"")
   }
   
   func sendNotification(message:String, data:String) {
-    sendMessage(id:"0", message:message, data:data)
+    sendMessage(id:"", message:message, data:data)
   }
   
   func sendMessage(id:String, message:String) {
@@ -147,7 +247,17 @@ class ViewController: UIViewController, WKNavigationDelegate {
   func sendMessage(id:String, message:String, data:String) {
     let queue = DispatchQueue(label: "org.webpagetest.message", attributes: .concurrent)
     queue.async {
-      self.sendMessageAsync("\(id) \(message) \(data)")
+      var str = id
+      if str.characters.count > 0 {
+        str += ":"
+      }
+      str += message
+      if data.characters.count > 0 {
+        str += "\t"
+        str += data
+      }
+      str += "\n"
+      self.sendMessageAsync(str)
     }
   }
   
@@ -155,7 +265,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
     if clientSocket != nil {
       self.log(">> \(message)")
       do {
-        //try clientSocket!.write(from:message)
+        try clientSocket!.write(from:message)
       } catch let err {
         self.log("Socket write error: \(err)")
       }
@@ -202,7 +312,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
         }
       } catch let err {
         self.log("\(id): Socket Read error: \(err)")
-        cont = false
+        cont = socket.isConnected
       }
     } while cont
     socket.close()
@@ -210,8 +320,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
   }
   
   func receivedRawData(id:Int, str:String) {
-    for (_, ch) in str.characters.enumerated() {
-      if ch == "\n" {
+    for ch in str.characters {
+      if ch == "\n" || ch == "\r" || ch == "\r\n" {
         if buffer_in.characters.count > 0 {
           let message = self.buffer_in
           self.buffer_in = ""
