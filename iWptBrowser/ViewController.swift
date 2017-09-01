@@ -25,6 +25,7 @@ extension String {
 }
 
 class ViewController: UIViewController, WKNavigationDelegate {
+  var startTime = DispatchTime.now()
   var webView: WKWebView?
   var clientSocket:Socket?
   var buffer_in = ""
@@ -69,6 +70,13 @@ class ViewController: UIViewController, WKNavigationDelegate {
     }
   }
   
+  func timestamp() -> Double {
+    let now = DispatchTime.now()
+    let nanoTime = now.uptimeNanoseconds - startTime.uptimeNanoseconds
+    let elapsed = Double(nanoTime / 100) / 1_000_000.0
+    return elapsed
+  }
+  
   func handleMessage(_ message:String) {
     self.log("<< \(message.replacingOccurrences(of: "\t", with: " "))")
     let parts = message.components(separatedBy: "\t")
@@ -86,7 +94,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
       if parts.count > 1 {
         data = parts[1]
       }
-      let messageParts = message.components(separatedBy: ".")
+      let messageParts = message.components(separatedBy: ":")
       if messageParts.count > 1 {
         message = messageParts[0]
         for i in 1..<messageParts.count {
@@ -131,27 +139,34 @@ class ViewController: UIViewController, WKNavigationDelegate {
   }
   
   func startBrowser(id:String) {
-    if webView != nil {
-      webView!.navigationDelegate = nil
-      webView!.removeFromSuperview()
-      webView = nil
-    }
+    closeWebView()
+    startTime = DispatchTime.now()
     webView = WKWebView()
     webView!.frame = self.view.bounds
     self.view.addSubview(webView!)
     webView!.loadHTMLString(startPage, baseURL: URL(string: "http://www.webpagetest.org"))
     hasOrange = true
     webView!.navigationDelegate = self
+    webView!.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
+    webView!.addObserver(self, forKeyPath: #keyPath(WKWebView.title), options: .new, context: nil)
+    webView!.addObserver(self, forKeyPath: #keyPath(WKWebView.isLoading), options: .new, context: nil)
     title = ""
     sendMessage(id:id, message:"OK")
   }
   
-  func closeBrowser(id:String) {
+  func closeWebView() {
     if webView != nil {
       webView!.navigationDelegate = nil
+      webView!.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
+      webView!.removeObserver(self, forKeyPath: #keyPath(WKWebView.title))
+      webView!.removeObserver(self, forKeyPath: #keyPath(WKWebView.isLoading))
       webView!.removeFromSuperview()
       webView = nil
     }
+  }
+
+  func closeBrowser(id:String) {
+    closeWebView()
     hasOrange = false
     title = "iWptBrowser"
     sendMessage(id:id, message:"OK")
@@ -193,10 +208,6 @@ class ViewController: UIViewController, WKNavigationDelegate {
         if result != nil {
           returned = "\(result!)"
         }
-        if returned.range(of: "\t") != nil {
-          ok += ".encoded"
-          returned = returned.base64Encoded()!
-        }
         self.sendMessage(id:id, message:ok, data:returned)
       }
     } else {
@@ -207,11 +218,56 @@ class ViewController: UIViewController, WKNavigationDelegate {
   /*************************************************************************************
                                   Webview interfaces
    *************************************************************************************/
+  override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    if keyPath != nil {
+      switch keyPath! {
+      case "estimatedProgress":
+        if webView != nil {
+          sendNotification(message:"page.progress", data:"\(webView!.estimatedProgress)")
+        }
+      case "title":
+        if webView != nil && webView!.title != nil {
+          title = webView!.title!
+          sendNotification(message:"page.title", data: webView!.title!)
+        }
+      case "isLoading":
+        if webView != nil {
+          if webView!.isLoading {
+            sendNotification(message: "page.loading")
+          } else {
+            sendNotification(message: "page.loadingFinished")
+          }
+        }
+      default:
+        self.log("Unexpected observation: \(keyPath!)")
+      }
+    }
+  }
+  
+  func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+    self.sendNotification(message: "page.didCommit")
+  }
+  
+  func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+    self.sendNotification(message: "page.didStartProvisionalNavigation")
+  }
+  
+  func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
+    self.sendNotification(message: "page.didReceiveServerRedirectForProvisionalNavigation")
+  }
+  
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-    title = webView.title
     self.sendNotification(message: "page.didFinish")
   }
   
+  func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError: Error) {
+    self.sendNotification(message: "page.didFail", data:"\(withError)")
+  }
+
+  func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError: Error) {
+    self.sendNotification(message: "page.didFailProvisionalNavigation", data:"\(withError)")
+  }
+
   func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
     let url = navigationAction.request.url!
     if navigationAction.targetFrame == nil || navigationAction.targetFrame!.isMainFrame {
@@ -227,6 +283,10 @@ class ViewController: UIViewController, WKNavigationDelegate {
       self.sendNotification(message: "page.navigateFrameStart", data:url.absoluteString)
       decisionHandler(.allow)
     }
+  }
+  
+  func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+    self.sendNotification(message: "browser.terminated")
   }
   
   /*************************************************************************************
@@ -245,16 +305,23 @@ class ViewController: UIViewController, WKNavigationDelegate {
   }
 
   func sendMessage(id:String, message:String, data:String) {
+    let timestamp = self.timestamp()
     let queue = DispatchQueue(label: "org.webpagetest.message", attributes: .concurrent)
     queue.async {
-      var str = id
-      if str.characters.count > 0 {
+      var str = "\(timestamp)\t\(id)"
+      if id.characters.count > 0 {
         str += ":"
       }
-      str += message
-      if data.characters.count > 0 {
+      var msg = message
+      var rawData = data
+      if data.range(of: "\t") != nil {
+        msg += ":encoded"
+        rawData = rawData.base64Encoded()!
+      }
+      str += msg
+      if rawData.characters.count > 0 {
         str += "\t"
-        str += data
+        str += rawData
       }
       str += "\n"
       self.sendMessageAsync(str)
@@ -310,8 +377,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
         if (str != nil) {
           self.receivedRawData(id:id, str:str!)
         }
-      } catch let err {
-        self.log("\(id): Socket Read error: \(err)")
+      } catch _ {
         cont = socket.isConnected
       }
     } while cont
