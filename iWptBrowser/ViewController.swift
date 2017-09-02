@@ -109,24 +109,25 @@ class ViewController: UIViewController, WKNavigationDelegate {
         }
       }
       switch message {
-        case "clearcache": clearCache(id:id)
-        case "startbrowser": startBrowser(id:id)
-        case "closebrowser", "stopbrowser": closeBrowser(id:id)
-        case "navigate":
-          if data != nil {
-            navigate(id:id, to:data!)
-          } else {
-            sendMessage(id:id, message:"ERROR", data:"Missing URL for navigation")
-          }
-        case "addorange", "setorange": addOrange(id:id)
-        case "exec":
-          if data != nil {
-            execScript(id:id, script:data!)
-          } else {
-            sendMessage(id:id, message:"ERROR", data:"Missing script for exec")
-          }
-        default:
-          sendMessage(id:id, message:"ERROR", data:"Unknown command: \(message)")
+      case "addorange", "setorange": addOrange(id:id)
+      case "clearcache": clearCache(id:id)
+      case "closebrowser", "stopbrowser": closeBrowser(id:id)
+      case "exec":
+        if data != nil {
+          execScript(id:id, script:data!)
+        } else {
+          sendMessage(id:id, message:"ERROR", data:"Missing script for exec")
+        }
+      case "exit": exit(0)
+      case "navigate":
+        if data != nil {
+          navigate(id:id, to:data!)
+        } else {
+          sendMessage(id:id, message:"ERROR", data:"Missing URL for navigation")
+        }
+      case "startbrowser": startBrowser(id:id)
+      default:
+        sendMessage(id:id, message:"ERROR", data:"Unknown command: \(message)")
       }
     }
   }
