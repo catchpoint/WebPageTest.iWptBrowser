@@ -10,6 +10,7 @@
 		0FA75D621F5B4B72005E914B /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA75D5F1F5B4B72005E914B /* Socket.swift */; };
 		0FA75D631F5B4B72005E914B /* SocketProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA75D601F5B4B72005E914B /* SocketProtocols.swift */; };
 		0FA75D641F5B4B72005E914B /* SocketUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA75D611F5B4B72005E914B /* SocketUtils.swift */; };
+		0FA75D691F5B70C5005E914B /* ASScreenRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA75D671F5B70C5005E914B /* ASScreenRecorder.m */; };
 		0FECFAA51F5719BD00E18B59 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FECFAA41F5719BD00E18B59 /* AppDelegate.swift */; };
 		0FECFAA71F5719BD00E18B59 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FECFAA61F5719BD00E18B59 /* ViewController.swift */; };
 		0FECFAAA1F5719BD00E18B59 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0FECFAA81F5719BD00E18B59 /* Main.storyboard */; };
@@ -21,6 +22,8 @@
 		0FA75D5F1F5B4B72005E914B /* Socket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Socket.swift; path = Socket/Socket.swift; sourceTree = "<group>"; };
 		0FA75D601F5B4B72005E914B /* SocketProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SocketProtocols.swift; path = Socket/SocketProtocols.swift; sourceTree = "<group>"; };
 		0FA75D611F5B4B72005E914B /* SocketUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SocketUtils.swift; path = Socket/SocketUtils.swift; sourceTree = "<group>"; };
+		0FA75D661F5B70C5005E914B /* ASScreenRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASScreenRecorder.h; sourceTree = "<group>"; };
+		0FA75D671F5B70C5005E914B /* ASScreenRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASScreenRecorder.m; sourceTree = "<group>"; };
 		0FECFAA11F5719BD00E18B59 /* iWptBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iWptBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FECFAA41F5719BD00E18B59 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0FECFAA61F5719BD00E18B59 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -51,6 +54,15 @@
 			name = Socket;
 			sourceTree = "<group>";
 		};
+		0FA75D651F5B70C5005E914B /* ASScreenRecorder */ = {
+			isa = PBXGroup;
+			children = (
+				0FA75D661F5B70C5005E914B /* ASScreenRecorder.h */,
+				0FA75D671F5B70C5005E914B /* ASScreenRecorder.m */,
+			);
+			path = ASScreenRecorder;
+			sourceTree = "<group>";
+		};
 		0FECFA981F5719BC00E18B59 = {
 			isa = PBXGroup;
 			children = (
@@ -77,6 +89,7 @@
 				0FECFAAB1F5719BD00E18B59 /* Assets.xcassets */,
 				0FECFAAD1F5719BD00E18B59 /* LaunchScreen.storyboard */,
 				0FECFAB01F5719BD00E18B59 /* Info.plist */,
+				0FA75D651F5B70C5005E914B /* ASScreenRecorder */,
 			);
 			path = iWptBrowser;
 			sourceTree = "<group>";
@@ -157,6 +170,7 @@
 				0FECFAA71F5719BD00E18B59 /* ViewController.swift in Sources */,
 				0FECFAA51F5719BD00E18B59 /* AppDelegate.swift in Sources */,
 				0FA75D641F5B4B72005E914B /* SocketUtils.swift in Sources */,
+				0FA75D691F5B70C5005E914B /* ASScreenRecorder.m in Sources */,
 				0FA75D631F5B4B72005E914B /* SocketProtocols.swift in Sources */,
 				0FA75D621F5B4B72005E914B /* Socket.swift in Sources */,
 			);

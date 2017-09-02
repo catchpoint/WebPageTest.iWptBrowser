@@ -102,7 +102,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
     }
   }
 
-  func captureScreen(_ small:Bool = true) -> UIImage? {
+  func captureScreen(_ small:Bool) -> UIImage? {
     let size = self.view.bounds.size
     var scale = UIScreen.main.scale
     if small {
