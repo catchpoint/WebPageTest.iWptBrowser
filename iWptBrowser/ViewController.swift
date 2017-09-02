@@ -149,7 +149,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
         }
       }
       switch message {
-      case "addorange", "setorange": addOrange(id:id)
+      case "addorange", "setorange", "showorange", "orange": addOrange(id:id)
       case "battery":
         UIDevice.current.isBatteryMonitoringEnabled = true
         sendMessage(id: id, message: "OK", data:"\(UIDevice.current.batteryLevel)")
@@ -177,6 +177,16 @@ class ViewController: UIViewController, WKNavigationDelegate {
         if isLandscape {
           isLandscape = false
           UIViewController.attemptRotationToDeviceOrientation()
+        }
+      case "removeorange", "hideorange":
+        if hasOrange && webView != nil {
+          hasOrange = false
+          self.webView!.evaluateJavaScript(self.hideOrange) { (result, error) in
+            self.log("Orange screen removed")
+            self.sendMessage(id:id, message:"OK")
+          }
+        } else {
+          self.sendMessage(id:id, message:"ERROR")
         }
       case "screenshot": screenShot(id:id)
       case "screenshotjpeg": screenShotJpeg(id:id)
