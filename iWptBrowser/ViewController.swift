@@ -127,7 +127,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
       if parts.count > 1 {
         data = parts[1]
       }
-      let messageParts = message.components(separatedBy: ":")
+      let messageParts = message.components(separatedBy: ".")
       if messageParts.count > 1 {
         message = messageParts[0]
         for i in 1..<messageParts.count {
@@ -135,6 +135,13 @@ class ViewController: UIViewController, WKNavigationDelegate {
             case "encoded":
               if data != nil {
                 data = data!.base64Decoded()
+              }
+            case "removeorange", "hideorange", "andwait":
+              if hasOrange && webView != nil {
+                hasOrange = false
+                self.webView!.evaluateJavaScript(self.hideOrange) { (result, error) in
+                  self.log("Orange screen removed")
+                }
               }
             default:
               self.log("Unknown command option: \(messageParts[i])")
@@ -243,6 +250,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
   
   func addOrange(id:String) {
     if webView != nil {
+      hasOrange = true
       webView!.evaluateJavaScript(showOrange) { (result, error) in
         self.sendMessage(id:id, message:"OK")
       }
