@@ -143,6 +143,9 @@ class ViewController: UIViewController, WKNavigationDelegate {
       }
       switch message {
       case "addorange", "setorange": addOrange(id:id)
+      case "battery":
+        UIDevice.current.isBatteryMonitoringEnabled = true
+        sendMessage(id: id, message: "OK", data:"\(UIDevice.current.batteryLevel)")
       case "clearcache": clearCache(id:id)
       case "closebrowser", "stopbrowser": closeBrowser(id:id)
       case "exec":
