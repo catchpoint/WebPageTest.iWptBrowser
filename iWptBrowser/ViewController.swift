@@ -24,12 +24,27 @@ extension String {
   }
 }
 
+extension UINavigationController {
+  override open var shouldAutorotate: Bool {
+    return true
+  }
+  
+  override open var supportedInterfaceOrientations: UIInterfaceOrientationMask{
+    get {
+      if let visibleVC = visibleViewController {
+        return visibleVC.supportedInterfaceOrientations
+      }
+      return super.supportedInterfaceOrientations
+    }
+  }}
+
 class ViewController: UIViewController, WKNavigationDelegate {
   var startTime = DispatchTime.now()
   var webView: WKWebView?
   var clientSocket:Socket?
   var buffer_in = ""
   var hasOrange = false
+  var isLandscape = false
   let startPage = "<html>\n" +
                   "<head>\n" +
                   "<style>\n" +
@@ -76,7 +91,17 @@ class ViewController: UIViewController, WKNavigationDelegate {
     let elapsed = Double(nanoTime / 100) / 1_000_000.0
     return elapsed
   }
-  
+
+  open override var supportedInterfaceOrientations: UIInterfaceOrientationMask{
+    get {
+      if self.isLandscape {
+        return .landscapeLeft
+      } else {
+        return .portrait
+      }
+    }
+  }
+
   func handleMessage(_ message:String) {
     self.log("<< \(message.replacingOccurrences(of: "\t", with: " "))")
     let parts = message.components(separatedBy: "\t")
@@ -119,11 +144,21 @@ class ViewController: UIViewController, WKNavigationDelegate {
           sendMessage(id:id, message:"ERROR", data:"Missing script for exec")
         }
       case "exit": exit(0)
+      case "landscape":
+        if !isLandscape {
+          isLandscape = true
+          UIViewController.attemptRotationToDeviceOrientation()
+        }
       case "navigate":
         if data != nil {
           navigate(id:id, to:data!)
         } else {
           sendMessage(id:id, message:"ERROR", data:"Missing URL for navigation")
+        }
+      case "portrait":
+        if isLandscape {
+          isLandscape = false
+          UIViewController.attemptRotationToDeviceOrientation()
         }
       case "startbrowser": startBrowser(id:id)
       default:
