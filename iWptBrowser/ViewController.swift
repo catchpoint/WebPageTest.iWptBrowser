@@ -102,6 +102,14 @@ class ViewController: UIViewController, WKNavigationDelegate {
     }
   }
 
+  func captureScreen() -> UIImage? {
+    UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, true, 0);
+    self.view.drawHierarchy(in: self.view.bounds, afterScreenUpdates: true);
+    let snapshotImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return snapshotImage;
+  }
+
   func handleMessage(_ message:String) {
     self.log("<< \(message.replacingOccurrences(of: "\t", with: " "))")
     let parts = message.components(separatedBy: "\t")
@@ -160,6 +168,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
           isLandscape = false
           UIViewController.attemptRotationToDeviceOrientation()
         }
+      case "screenshot": screenShot(id:id)
+      case "screenshotjpeg": screenShotJpeg(id:id)
       case "startbrowser": startBrowser(id:id)
       default:
         sendMessage(id:id, message:"ERROR", data:"Unknown command: \(message)")
@@ -255,6 +265,36 @@ class ViewController: UIViewController, WKNavigationDelegate {
     } else {
       sendMessage(id:id, message:"ERROR", data:"Browser not started")
     }
+  }
+  
+  func screenShot(id:String) {
+    let image = captureScreen()
+    if image != nil {
+      let png = UIImagePNGRepresentation(image!)
+      if png != nil {
+        let encoded = png?.base64EncodedString()
+        if encoded != nil {
+          sendMessage(id:id, message:"OK", data:encoded!)
+          return
+        }
+      }
+    }
+    sendMessage(id:id, message:"ERROR")
+  }
+
+  func screenShotJpeg(id:String) {
+    let image = captureScreen()
+    if image != nil {
+      let png = UIImageJPEGRepresentation(image!, 0.75)
+      if png != nil {
+        let encoded = png?.base64EncodedString()
+        if encoded != nil {
+          sendMessage(id:id, message:"OK", data:encoded!)
+          return
+        }
+      }
+    }
+    sendMessage(id:id, message:"ERROR")
   }
   
   /*************************************************************************************
