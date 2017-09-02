@@ -171,7 +171,13 @@ class ViewController: UIViewController, WKNavigationDelegate {
                                   browser operations
    *************************************************************************************/
   func clearCache(id:String) {
-    sendMessage(id:id, message:"OK")
+    let websiteDataTypes = NSSet(array: [WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeMemoryCache, WKWebsiteDataTypeCookies,
+                                         WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeSessionStorage, WKWebsiteDataTypeWebSQLDatabases,
+                                         WKWebsiteDataTypeIndexedDBDatabases, WKWebsiteDataTypeOfflineWebApplicationCache])
+    HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
+    WKWebsiteDataStore.default().removeData(ofTypes: websiteDataTypes as! Set<String>, modifiedSince: Date.distantPast) {
+      self.sendMessage(id:id, message:"OK")
+    }
   }
   
   func startBrowser(id:String) {
