@@ -212,7 +212,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
     webView!.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
     webView!.addObserver(self, forKeyPath: #keyPath(WKWebView.title), options: .new, context: nil)
     webView!.addObserver(self, forKeyPath: #keyPath(WKWebView.isLoading), options: .new, context: nil)
-    title = ""
+    title = "iWptBrowser"
     sendMessage(id:id, message:"OK")
   }
   
@@ -266,7 +266,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
         var returned = ""
         if error != nil {
           ok = "ERROR"
-          returned = "\(error!)"
+          returned = "\(error!.localizedDescription)"
         }
         if result != nil {
           returned = "\(result!)"
@@ -354,11 +354,13 @@ class ViewController: UIViewController, WKNavigationDelegate {
   }
   
   func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError: Error) {
-    self.sendNotification(message: "page.didFail", data:"\(withError)")
+    title = withError.localizedDescription
+    self.sendNotification(message: "page.didFail", data:"\(withError.localizedDescription)")
   }
 
   func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError: Error) {
-    self.sendNotification(message: "page.didFailProvisionalNavigation", data:"\(withError)")
+    title = withError.localizedDescription
+    self.sendNotification(message: "page.didFailProvisionalNavigation", data:"\(withError.localizedDescription)")
   }
 
   func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
