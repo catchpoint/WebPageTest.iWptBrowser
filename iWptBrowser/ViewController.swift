@@ -102,8 +102,13 @@ class ViewController: UIViewController, WKNavigationDelegate {
     }
   }
 
-  func captureScreen() -> UIImage? {
-    UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, true, 0);
+  func captureScreen(_ small:Bool = true) -> UIImage? {
+    let size = self.view.bounds.size
+    var scale = UIScreen.main.scale
+    if small {
+      scale = 1.0
+    }
+    UIGraphicsBeginImageContextWithOptions(size, true, scale);
     self.view.drawHierarchy(in: self.view.bounds, afterScreenUpdates: true);
     let snapshotImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
@@ -188,8 +193,10 @@ class ViewController: UIViewController, WKNavigationDelegate {
         } else {
           self.sendMessage(id:id, message:"ERROR")
         }
-      case "screenshot": screenShot(id:id)
-      case "screenshotjpeg": screenShotJpeg(id:id)
+      case "screenshot": screenShot(id:id, small:true)
+      case "screenshotbig": screenShot(id:id, small:false)
+      case "screenshotbigjpeg": screenShotJpeg(id:id, small:false)
+      case "screenshotjpeg": screenShotJpeg(id:id, small:true)
       case "startbrowser": startBrowser(id:id)
       default:
         sendMessage(id:id, message:"ERROR", data:"Unknown command: \(message)")
@@ -288,8 +295,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
     }
   }
   
-  func screenShot(id:String) {
-    let image = captureScreen()
+  func screenShot(id:String, small:Bool) {
+    let image = captureScreen(small)
     if image != nil {
       let png = UIImagePNGRepresentation(image!)
       if png != nil {
@@ -303,8 +310,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
     sendMessage(id:id, message:"ERROR")
   }
 
-  func screenShotJpeg(id:String) {
-    let image = captureScreen()
+  func screenShotJpeg(id:String, small:Bool) {
+    let image = captureScreen(small)
     if image != nil {
       let png = UIImageJPEGRepresentation(image!, 0.75)
       if png != nil {
@@ -411,7 +418,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
 
   func sendMessage(id:String, message:String, data:String) {
     let timestamp = self.timestamp()
-    let queue = DispatchQueue(label: "org.webpagetest.message", attributes: .concurrent)
+    let queue = DispatchQueue(label: "org.webpagetest.message")
     queue.async {
       var str = "\(timestamp)\t\(id)"
       if id.characters.count > 0 {
