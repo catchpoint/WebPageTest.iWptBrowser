@@ -415,7 +415,12 @@ class ViewController: UIViewController, WKNavigationDelegate {
   
   func sendMessageAsync(_ message:String) {
     if clientSocket != nil {
-      self.log(">> \(message)")
+      if message.characters.count < 200 {
+        self.log(">> \(message)")
+      } else {
+        let end = message.index(message.startIndex, offsetBy:200)
+        self.log(">> \(message.substring(to: end)) ...")
+      }
       do {
         try clientSocket!.write(from:message)
       } catch let err {
