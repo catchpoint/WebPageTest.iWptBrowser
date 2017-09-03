@@ -10,6 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <QuartzCore/QuartzCore.h>
 #import <AssetsLibrary/AssetsLibrary.h>
+#import <Photos/Photos.h>
 
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
@@ -62,6 +63,8 @@
         if ((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) && _scale > 1) {
             _scale = 1.0;
         }
+      // Force scaled capture for now
+        _scale = 1.0;
         _isRecording = NO;
         
         _append_pixelBuffer_queue = dispatch_queue_create("ASScreenRecorder.append_queue", DISPATCH_QUEUE_SERIAL);
@@ -159,8 +162,9 @@
                                                 error:&error];
     NSParameterAssert(_videoWriter);
     
-    NSInteger pixelNumber = _viewSize.width * _viewSize.height * _scale;
-    NSDictionary* videoCompression = @{AVVideoAverageBitRateKey: @(pixelNumber * 11.4)};
+    //NSInteger pixelNumber = _viewSize.width * _viewSize.height * _scale;
+    //NSDictionary* videoCompression = @{AVVideoAverageBitRateKey: @(pixelNumber * 11.4)};
+    NSDictionary* videoCompression = @{AVVideoAverageBitRateKey: [NSNumber numberWithInt:8000000]};
     
     NSDictionary* videoSettings = @{AVVideoCodecKey: AVVideoCodecH264,
                                     AVVideoWidthKey: [NSNumber numberWithInt:_viewSize.width*_scale],
@@ -236,7 +240,18 @@
                 if (self.videoURL) {
                     completion();
                 } else {
-                    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+                  [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+                    [PHAssetChangeRequest creationRequestForAssetFromVideoAtFileURL:_videoWriter.outputURL];
+                  } completionHandler:^(BOOL success, NSError *error) {
+                    if (error) {
+                      NSLog(@"Error copying video to camera roll:%@", [error localizedDescription]);
+                    } else {
+                      [self removeTempFilePath:_videoWriter.outputURL.path];
+                      completion();
+                    }
+                  }];
+                  /*
+                  ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
                     [library writeVideoAtPathToSavedPhotosAlbum:_videoWriter.outputURL completionBlock:^(NSURL *assetURL, NSError *error) {
                         if (error) {
                             NSLog(@"Error copying video to camera roll:%@", [error localizedDescription]);
@@ -245,6 +260,7 @@
                             completion();
                         }
                     }];
+                  */
                 }
             }];
         });

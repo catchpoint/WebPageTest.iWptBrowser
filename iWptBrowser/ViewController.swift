@@ -42,6 +42,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
   var startTime = DispatchTime.now()
   var webView: WKWebView?
   var clientSocket:Socket?
+  var videoCapture:ASScreenRecorder?
+  var videoUrl: URL?
   var buffer_in = ""
   var hasOrange = false
   var isLandscape = false
@@ -76,6 +78,10 @@ class ViewController: UIViewController, WKNavigationDelegate {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    videoUrl = URL(fileURLWithPath: NSHomeDirectory())
+    videoUrl!.appendPathComponent("tmp/video.mp4")
+    self.log("Video URL: \(videoUrl!)")
+    deleteVideo()
     self.view.backgroundColor = UIColor.black
     title = "iWptBrowser"
     self.edgesForExtendedLayout = []
@@ -198,6 +204,12 @@ class ViewController: UIViewController, WKNavigationDelegate {
       case "screenshotbigjpeg": screenShotJpeg(id:id, small:false)
       case "screenshotjpeg": screenShotJpeg(id:id, small:true)
       case "startbrowser": startBrowser(id:id)
+      case "startvideo": startVideo(id:id)
+      case "stopvideo": stopVideo(id:id)
+      case "deletevideo":
+        deleteVideo()
+        self.sendMessage(id:id, message:"OK")
+      case "getvideo": getVideo(id:id)
       default:
         sendMessage(id:id, message:"ERROR", data:"Unknown command: \(message)")
       }
@@ -323,6 +335,48 @@ class ViewController: UIViewController, WKNavigationDelegate {
       }
     }
     sendMessage(id:id, message:"ERROR")
+  }
+
+  /*************************************************************************************
+                                  Video Capture
+   *************************************************************************************/
+  func startVideo(id:String) {
+    if videoCapture == nil {
+      deleteVideo()
+      videoCapture = ASScreenRecorder()
+      videoCapture!.videoURL = videoUrl
+      videoCapture!.startRecording()
+      sendMessage(id:id, message:"OK")
+    } else {
+      sendMessage(id:id, message:"ERROR")
+    }
+  }
+  
+  func stopVideo(id:String) {
+    if videoCapture != nil {
+      videoCapture!.stopRecording() {
+        self.sendMessage(id:id, message:"OK")
+      }
+    } else {
+      sendMessage(id:id, message:"ERROR")
+    }
+  }
+  
+  func deleteVideo() {
+    do {
+      try FileManager.default.removeItem(at: videoUrl!)
+    } catch _ {
+    }
+  }
+  
+  func getVideo(id:String) {
+    do {
+      let attr = try FileManager.default.attributesOfItem(atPath: videoUrl!.path) as NSDictionary
+      let filesize = attr.fileSize()
+      sendMessage(id: id, message: "OK", data: "\(filesize) bytes")
+    } catch _ {
+      sendMessage(id: id, message: "ERROR")
+    }
   }
   
   /*************************************************************************************

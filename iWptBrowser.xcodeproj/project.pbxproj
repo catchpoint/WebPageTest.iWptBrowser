@@ -10,7 +10,7 @@
 		0FA75D621F5B4B72005E914B /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA75D5F1F5B4B72005E914B /* Socket.swift */; };
 		0FA75D631F5B4B72005E914B /* SocketProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA75D601F5B4B72005E914B /* SocketProtocols.swift */; };
 		0FA75D641F5B4B72005E914B /* SocketUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA75D611F5B4B72005E914B /* SocketUtils.swift */; };
-		0FA75D691F5B70C5005E914B /* ASScreenRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA75D671F5B70C5005E914B /* ASScreenRecorder.m */; };
+		0FA75D6E1F5C54C0005E914B /* ASScreenRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA75D6C1F5C54C0005E914B /* ASScreenRecorder.m */; };
 		0FECFAA51F5719BD00E18B59 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FECFAA41F5719BD00E18B59 /* AppDelegate.swift */; };
 		0FECFAA71F5719BD00E18B59 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FECFAA61F5719BD00E18B59 /* ViewController.swift */; };
 		0FECFAAA1F5719BD00E18B59 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0FECFAA81F5719BD00E18B59 /* Main.storyboard */; };
@@ -22,8 +22,9 @@
 		0FA75D5F1F5B4B72005E914B /* Socket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Socket.swift; path = Socket/Socket.swift; sourceTree = "<group>"; };
 		0FA75D601F5B4B72005E914B /* SocketProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SocketProtocols.swift; path = Socket/SocketProtocols.swift; sourceTree = "<group>"; };
 		0FA75D611F5B4B72005E914B /* SocketUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SocketUtils.swift; path = Socket/SocketUtils.swift; sourceTree = "<group>"; };
-		0FA75D661F5B70C5005E914B /* ASScreenRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASScreenRecorder.h; sourceTree = "<group>"; };
-		0FA75D671F5B70C5005E914B /* ASScreenRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASScreenRecorder.m; sourceTree = "<group>"; };
+		0FA75D6B1F5C54BF005E914B /* iWptBrowser-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iWptBrowser-Bridging-Header.h"; sourceTree = "<group>"; };
+		0FA75D6C1F5C54C0005E914B /* ASScreenRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASScreenRecorder.m; sourceTree = "<group>"; };
+		0FA75D6D1F5C54C0005E914B /* ASScreenRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASScreenRecorder.h; sourceTree = "<group>"; };
 		0FECFAA11F5719BD00E18B59 /* iWptBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iWptBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FECFAA41F5719BD00E18B59 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0FECFAA61F5719BD00E18B59 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -57,8 +58,9 @@
 		0FA75D651F5B70C5005E914B /* ASScreenRecorder */ = {
 			isa = PBXGroup;
 			children = (
-				0FA75D661F5B70C5005E914B /* ASScreenRecorder.h */,
-				0FA75D671F5B70C5005E914B /* ASScreenRecorder.m */,
+				0FA75D6C1F5C54C0005E914B /* ASScreenRecorder.m */,
+				0FA75D6D1F5C54C0005E914B /* ASScreenRecorder.h */,
+				0FA75D6B1F5C54BF005E914B /* iWptBrowser-Bridging-Header.h */,
 			);
 			path = ASScreenRecorder;
 			sourceTree = "<group>";
@@ -127,6 +129,7 @@
 					0FECFAA01F5719BC00E18B59 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = NWBL8UVJPY;
+						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -170,7 +173,7 @@
 				0FECFAA71F5719BD00E18B59 /* ViewController.swift in Sources */,
 				0FECFAA51F5719BD00E18B59 /* AppDelegate.swift in Sources */,
 				0FA75D641F5B4B72005E914B /* SocketUtils.swift in Sources */,
-				0FA75D691F5B70C5005E914B /* ASScreenRecorder.m in Sources */,
+				0FA75D6E1F5C54C0005E914B /* ASScreenRecorder.m in Sources */,
 				0FA75D631F5B4B72005E914B /* SocketProtocols.swift in Sources */,
 				0FA75D621F5B4B72005E914B /* Socket.swift in Sources */,
 			);
@@ -238,7 +241,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -282,7 +285,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -295,11 +298,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = NWBL8UVJPY;
 				INFOPLIST_FILE = iWptBrowser/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.webpagetest.iWptBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "iWptBrowser/ASScreenRecorder/iWptBrowser-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -308,11 +314,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = NWBL8UVJPY;
 				INFOPLIST_FILE = iWptBrowser/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.webpagetest.iWptBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "iWptBrowser/ASScreenRecorder/iWptBrowser-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
