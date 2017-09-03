@@ -57,6 +57,12 @@
     self = [super init];
     if (self) {
         _viewSize = [UIApplication sharedApplication].delegate.window.bounds.size;
+        if (UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) {
+          // Swap the width and height to get the unrotated dimensions
+          CGFloat tmp = _viewSize.height;
+          _viewSize.height = _viewSize.width;
+          _viewSize.width = tmp;
+        }
         _scale = [UIScreen mainScreen].scale;
         _bitrate = (_viewSize.width * _viewSize.height * _scale) * 11.4;
         _fps = 60;
@@ -180,15 +186,16 @@
 - (CGAffineTransform)videoTransformForDeviceOrientation
 {
     CGAffineTransform videoTransform;
-    switch ([UIDevice currentDevice].orientation) {
-        case UIDeviceOrientationLandscapeLeft:
+    switch ([UIApplication sharedApplication].statusBarOrientation) {
+        case UIInterfaceOrientationLandscapeLeft:
             videoTransform = CGAffineTransformMakeRotation(-M_PI_2);
             break;
-        case UIDeviceOrientationLandscapeRight:
+        case UIInterfaceOrientationLandscapeRight:
             videoTransform = CGAffineTransformMakeRotation(M_PI_2);
             break;
-        case UIDeviceOrientationPortraitUpsideDown:
-            videoTransform = CGAffineTransformMakeRotation(M_PI);
+        case UIInterfaceOrientationPortraitUpsideDown:
+            //videoTransform = CGAffineTransformMakeRotation(M_PI);
+            videoTransform = CGAffineTransformIdentity;
             break;
         default:
             videoTransform = CGAffineTransformIdentity;

@@ -103,7 +103,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
       if self.isLandscape {
         return .landscapeLeft
       } else {
-        return .portrait
+        return .portraitUpsideDown
       }
     }
   }
@@ -357,6 +357,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
   func stopVideo(id:String) {
     if videoCapture != nil {
       videoCapture!.stopRecording() {
+        self.videoCapture = nil
         self.sendMessage(id:id, message:"OK")
       }
     } else {
@@ -375,7 +376,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
     do {
       let attr = try FileManager.default.attributesOfItem(atPath: videoUrl!.path) as NSDictionary
       let filesize = attr.fileSize()
-      // TODO: transfer the video back
+      // TODO: return the video bytes
       sendMessage(id: id, message: "OK", data: "\(filesize) bytes")
     } catch _ {
       sendMessage(id: id, message: "ERROR")
