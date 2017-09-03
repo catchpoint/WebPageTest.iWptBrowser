@@ -345,6 +345,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
       deleteVideo()
       videoCapture = ASScreenRecorder()
       videoCapture!.videoURL = videoUrl
+      videoCapture!.bitrate = 8000000
+      videoCapture!.scale = 1.0
       videoCapture!.startRecording()
       sendMessage(id:id, message:"OK")
     } else {
@@ -373,6 +375,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
     do {
       let attr = try FileManager.default.attributesOfItem(atPath: videoUrl!.path) as NSDictionary
       let filesize = attr.fileSize()
+      // TODO: transfer the video back
       sendMessage(id: id, message: "OK", data: "\(filesize) bytes")
     } catch _ {
       sendMessage(id: id, message: "ERROR")

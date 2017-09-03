@@ -33,6 +33,18 @@ typedef void (^VideoCompletionBlock)(void);
  */
 @property (nonatomic) NSInteger fps;
 
+/**
+ * Defaults to display scale (1:1 pixel recording). Set to 1 for scaled capture.
+ * Must be set before calling -startRecording
+ */
+@property (nonatomic) CGFloat scale;
+
+/**
+ * Defaults to a caluclated bit rate based on the capture pixel area.
+ * Must be set before calling -startRecording
+ */
+@property (nonatomic) NSInteger bitrate;
+
 + (instancetype)sharedInstance;
 - (BOOL)startRecording;
 - (void)pauseRecording;

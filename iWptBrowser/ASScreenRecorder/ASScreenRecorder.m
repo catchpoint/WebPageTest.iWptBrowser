@@ -36,8 +36,7 @@
     dispatch_semaphore_t _pixelAppendSemaphore;
     
     CGSize _viewSize;
-    CGFloat _scale;
-    
+  
     CGColorSpaceRef _rgbColorSpace;
     CVPixelBufferPoolRef _outputBufferPool;
 }
@@ -59,12 +58,8 @@
     if (self) {
         _viewSize = [UIApplication sharedApplication].delegate.window.bounds.size;
         _scale = [UIScreen mainScreen].scale;
-        // record half size resolution for retina iPads
-        if ((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) && _scale > 1) {
-            _scale = 1.0;
-        }
-      // Force scaled capture for now
-        _scale = 1.0;
+        _bitrate = (_viewSize.width * _viewSize.height * _scale) * 11.4;
+        _fps = 60;
         _isRecording = NO;
         
         _append_pixelBuffer_queue = dispatch_queue_create("ASScreenRecorder.append_queue", DISPATCH_QUEUE_SERIAL);
@@ -72,7 +67,6 @@
         dispatch_set_target_queue(_render_queue, dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_HIGH, 0));
         _frameRenderingSemaphore = dispatch_semaphore_create(1);
         _pixelAppendSemaphore = dispatch_semaphore_create(1);
-        _fps = 60;
     }
     return self;
 }
@@ -162,9 +156,7 @@
                                                 error:&error];
     NSParameterAssert(_videoWriter);
     
-    //NSInteger pixelNumber = _viewSize.width * _viewSize.height * _scale;
-    //NSDictionary* videoCompression = @{AVVideoAverageBitRateKey: @(pixelNumber * 11.4)};
-    NSDictionary* videoCompression = @{AVVideoAverageBitRateKey: [NSNumber numberWithInt:8000000]};
+    NSDictionary* videoCompression = @{AVVideoAverageBitRateKey: [NSNumber numberWithLong:_bitrate]};
     
     NSDictionary* videoSettings = @{AVVideoCodecKey: AVVideoCodecH264,
                                     AVVideoWidthKey: [NSNumber numberWithInt:_viewSize.width*_scale],
@@ -250,17 +242,6 @@
                       completion();
                     }
                   }];
-                  /*
-                  ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-                    [library writeVideoAtPathToSavedPhotosAlbum:_videoWriter.outputURL completionBlock:^(NSURL *assetURL, NSError *error) {
-                        if (error) {
-                            NSLog(@"Error copying video to camera roll:%@", [error localizedDescription]);
-                        } else {
-                            [self removeTempFilePath:_videoWriter.outputURL.path];
-                            completion();
-                        }
-                    }];
-                  */
                 }
             }];
         });
