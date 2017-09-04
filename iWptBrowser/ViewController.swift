@@ -78,6 +78,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    UIApplication.shared.isIdleTimerDisabled = true
+    UIScreen.main.brightness = 0.0
     videoUrl = URL(fileURLWithPath: NSHomeDirectory())
     videoUrl!.appendPathComponent("tmp/video.mp4")
     self.log("Video URL: \(videoUrl!)")
