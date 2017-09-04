@@ -5,8 +5,9 @@
 //  Created by Patrick Meenan on 8/30/17.
 //  Copyright © 2017 WebPageTest LLC. All rights reserved.
 //
-import WebKit
+import Darwin
 import UIKit
+import WebKit
 
 extension String {
   func base64Encoded() -> String? {
@@ -375,13 +376,37 @@ class ViewController: UIViewController, WKNavigationDelegate {
   }
   
   func getVideo(id:String) {
-    do {
-      let attr = try FileManager.default.attributesOfItem(atPath: videoUrl!.path) as NSDictionary
-      let filesize = attr.fileSize()
-      // TODO: return the video bytes
-      sendMessage(id: id, message: "OK", data: "\(filesize) bytes")
-    } catch _ {
-      sendMessage(id: id, message: "ERROR")
+    let queue = DispatchQueue(label: "org.webpagetest.message")
+    queue.async {
+      do {
+        let attr = try FileManager.default.attributesOfItem(atPath: self.videoUrl!.path) as NSDictionary
+        let filesize = attr.fileSize()
+        let file = fopen(self.videoUrl!.path, "r")
+        if file != nil {
+          var dataSent = 0
+          let chunkSize = 4096
+          let readBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: chunkSize)
+          var done = false
+          self.sendMessageSync(id: "", message: "StartVideo", data: "\(filesize)")
+          repeat {
+            let count = fread(readBuffer, 1, chunkSize, file)
+            if count > 0 {
+              dataSent += count
+              let data = NSData(bytes: readBuffer, length: count)
+              self.sendMessageSync(id: "", message:"VideoData", data: data.base64EncodedString())
+            } else {
+              done = true
+            }
+          } while !done
+          self.sendMessageSync(id: id, message: "OK", data: "\(dataSent) bytes sent of \(filesize) bytes")
+          fclose(file)
+        } else {
+          self.sendMessageSync(id: id, message: "ERROR", data:"")
+        }
+      } catch let err {
+        self.log("Error getting video: \(err)")
+        self.sendMessageSync(id: id, message: "ERROR", data:"")
+      }
     }
   }
   
@@ -400,7 +425,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
           title = webView!.title!
           sendNotification(message:"page.title", data: webView!.title!)
         }
-      case "isLoading":
+      case "loading":
         if webView != nil {
           if webView!.isLoading {
             sendNotification(message: "page.loading")
@@ -499,7 +524,28 @@ class ViewController: UIViewController, WKNavigationDelegate {
       self.sendMessageAsync(str)
     }
   }
-  
+
+  func sendMessageSync(id:String, message:String, data:String) {
+    let timestamp = self.timestamp()
+    var str = "\(timestamp)\t\(id)"
+    if id.characters.count > 0 {
+      str += ":"
+    }
+    var msg = message
+    var rawData = data
+    if data.range(of: "\t") != nil {
+      msg += ":encoded"
+      rawData = rawData.base64Encoded()!
+    }
+    str += msg
+    if rawData.characters.count > 0 {
+      str += "\t"
+      str += rawData
+    }
+    str += "\n"
+    self.sendMessageAsync(str)
+  }
+
   func sendMessageAsync(_ message:String) {
     if clientSocket != nil {
       if message.characters.count < 200 {
@@ -544,9 +590,10 @@ class ViewController: UIViewController, WKNavigationDelegate {
   func pumpSocket(_ socket:Socket, _ id:Int) {
     var cont = true
     do {
+      try socket.setBlocking(mode: true)
       try socket.setReadTimeout(value: 10000)
     } catch let err {
-      self.log("\(id): Socket Read timeout error: \(err)")
+      self.log("\(id): Socket setup error: \(err)")
     }
     repeat {
       do {
