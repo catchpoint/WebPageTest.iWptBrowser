@@ -233,6 +233,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
   }
   
   func startBrowser(id:String) {
+    UIScreen.main.brightness = 0.0
     closeWebView()
     startTime = DispatchTime.now()
     webView = WKWebView()
@@ -301,7 +302,19 @@ class ViewController: UIViewController, WKNavigationDelegate {
           returned = "\(error!.localizedDescription)"
         }
         if result != nil {
-          returned = "\(result!)"
+          let type = type(of:result!)
+          self.log("\(type): \(result!)")
+          let is_json = JSONSerialization.isValidJSONObject(result!)
+          if is_json {
+            do {
+              let json = try JSONSerialization.data(withJSONObject: result!)
+              returned = String(data: json, encoding:.utf8)!
+            } catch {
+            }
+          }
+          if returned.characters.count == 0 {
+            returned = "\(result!)"
+          }
         }
         self.sendMessage(id:id, message:ok, data:returned)
       }
@@ -511,8 +524,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
       }
       var msg = message
       var rawData = data
-      if data.range(of: "\t") != nil {
-        msg += ":encoded"
+      if data.range(of: "\t") != nil || data.range(of: "\n") != nil {
+        msg += "!encoded"
         rawData = rawData.base64Encoded()!
       }
       str += msg
@@ -533,8 +546,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
     }
     var msg = message
     var rawData = data
-    if data.range(of: "\t") != nil {
-      msg += ":encoded"
+    if data.range(of: "\t") != nil || data.range(of: "\n") != nil {
+      msg += "!encoded"
       rawData = rawData.base64Encoded()!
     }
     str += msg
