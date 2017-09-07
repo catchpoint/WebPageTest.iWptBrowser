@@ -335,7 +335,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
       if png != nil {
         let encoded = png?.base64EncodedString()
         if encoded != nil {
-          sendMessage(id:id, message:"OK", data:encoded!)
+          sendMessage(id:id, message:"OK!encoded", data:encoded!)
           return
         }
       }
@@ -350,7 +350,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
       if png != nil {
         let encoded = png?.base64EncodedString()
         if encoded != nil {
-          sendMessage(id:id, message:"OK", data:encoded!)
+          sendMessage(id:id, message:"OK!encoded", data:encoded!)
           return
         }
       }
@@ -411,11 +411,12 @@ class ViewController: UIViewController, WKNavigationDelegate {
             if count > 0 {
               dataSent += count
               let data = NSData(bytes: readBuffer, length: count)
-              self.sendMessageSync(id: "", message:"VideoData", data: data.base64EncodedString())
+              self.sendMessageSync(id: "", message:"VideoData!encoded", data: data.base64EncodedString())
             } else {
               done = true
             }
           } while !done
+          self.sendMessageSync(id: "", message: "EndVideo", data: "\(filesize)")
           self.sendMessageSync(id: id, message: "OK", data: "\(dataSent) bytes sent of \(filesize) bytes")
           fclose(file)
         } else {
