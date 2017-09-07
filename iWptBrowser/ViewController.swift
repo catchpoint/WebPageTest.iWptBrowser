@@ -74,7 +74,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
                     "})();"
   
   func log(_ message: String) {
-    NSLog("iWptBrowser: \(message)")
+    NSLog("iWptBrowser (\(self.timestamp())): \(message.replacingOccurrences(of: "\t", with: " ").replacingOccurrences(of: "\n", with: ""))")
   }
   
   override func viewDidLoad() {
@@ -94,6 +94,11 @@ class ViewController: UIViewController, WKNavigationDelegate {
     }
   }
   
+  override func didReceiveMemoryWarning() {
+    self.log("didReceiveMemoryWarning")
+    super.didReceiveMemoryWarning()
+  }
+
   func timestamp() -> Double {
     let now = DispatchTime.now()
     let nanoTime = now.uptimeNanoseconds - startTime.uptimeNanoseconds
@@ -584,12 +589,9 @@ class ViewController: UIViewController, WKNavigationDelegate {
       var count = 0
       repeat {
         let client = try socket.acceptClientConnection()
-        if clientSocket != nil {
-          clientSocket!.close()
-        }
-        clientSocket = client
         count += 1
         self.log("Agent #\(count) connected")
+        clientSocket = client
         let queue = DispatchQueue(label: "org.webpagetest.socket\(count)", attributes: .concurrent)
         queue.async {
           self.pumpSocket(client, count)
@@ -614,8 +616,9 @@ class ViewController: UIViewController, WKNavigationDelegate {
         if (str != nil) {
           self.receivedRawData(id:id, str:str!)
         }
-      } catch _ {
-        cont = socket.isConnected
+      } catch let err {
+        self.log("Pump Socket read exception: \(err)")
+        cont = socket.isConnected && !socket.remoteConnectionClosed
       }
     } while cont
     socket.close()
@@ -637,11 +640,4 @@ class ViewController: UIViewController, WKNavigationDelegate {
       }
     }
   }
-
-  override func didReceiveMemoryWarning() {
-    super.didReceiveMemoryWarning()
-  }
-
-
 }
-
