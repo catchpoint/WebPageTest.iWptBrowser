@@ -58,7 +58,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
                   "</html>"
   
   func log(_ message: String) {
-    NSLog("iWptBrowser (\(self.timestamp())): \(message.replacingOccurrences(of: "\t", with: " ").replacingOccurrences(of: "\n", with: ""))")
+    //NSLog("iWptBrowser (\(self.timestamp())): \(message.replacingOccurrences(of: "\t", with: " ").replacingOccurrences(of: "\n", with: ""))")
   }
   
   override func viewDidLoad() {
