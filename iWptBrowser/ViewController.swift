@@ -48,6 +48,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
   var buffer_in = ""
   var hasOrange = false
   var isLandscape = false
+  var isActive = false
   let startPage = "<html>\n" +
                   "<head>\n" +
                   "<style>\n" +
@@ -258,6 +259,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
   func closeBrowser(id:String) {
     closeWebView()
     hasOrange = false
+    isActive = false
     title = "iWptBrowser"
     sendMessage(id:id, message:"OK")
   }
@@ -270,7 +272,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
       }
       title = "Loading..."
       webView!.isHidden = false
-      self.hasOrange = false
+      hasOrange = false
+      isActive = true
       webView!.load(URLRequest(url: URL(string:url)!))
       sendMessage(id:id, message:"OK")
     } else {
@@ -433,7 +436,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
                                   Webview interfaces
    *************************************************************************************/
   override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-    if keyPath != nil {
+    if isActive && keyPath != nil {
       switch keyPath! {
       case "estimatedProgress":
         if webView != nil {
@@ -459,43 +462,59 @@ class ViewController: UIViewController, WKNavigationDelegate {
   }
   
   func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
-    self.sendNotification(message: "page.didCommit")
+    if isActive {
+      self.sendNotification(message: "page.didCommit")
+    }
   }
   
   func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-    self.sendNotification(message: "page.didStartProvisionalNavigation")
+    if isActive {
+      self.sendNotification(message: "page.didStartProvisionalNavigation")
+    }
   }
   
   func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
-    self.sendNotification(message: "page.didReceiveServerRedirectForProvisionalNavigation")
+    if isActive {
+      self.sendNotification(message: "page.didReceiveServerRedirectForProvisionalNavigation")
+    }
   }
   
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-    self.sendNotification(message: "page.didFinish")
+    if isActive {
+      self.sendNotification(message: "page.didFinish")
+    }
   }
   
   func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError: Error) {
-    title = withError.localizedDescription
-    self.sendNotification(message: "page.didFail", data:"\(withError.localizedDescription)")
+    if isActive {
+      title = withError.localizedDescription
+      self.sendNotification(message: "page.didFail", data:"\(withError.localizedDescription)")
+    }
   }
 
   func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError: Error) {
-    title = withError.localizedDescription
-    self.sendNotification(message: "page.didFailProvisionalNavigation", data:"\(withError.localizedDescription)")
+    if isActive {
+      title = withError.localizedDescription
+      self.sendNotification(message: "page.didFailProvisionalNavigation", data:"\(withError.localizedDescription)")
+    }
   }
 
   func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-    let url = navigationAction.request.url!
-    if navigationAction.targetFrame == nil || navigationAction.targetFrame!.isMainFrame {
-      self.sendNotification(message: "page.navigateStart", data:url.absoluteString)
-    } else {
-      self.sendNotification(message: "page.navigateFrameStart", data:url.absoluteString)
+    if isActive {
+      let url = navigationAction.request.url!
+      if navigationAction.targetFrame == nil || navigationAction.targetFrame!.isMainFrame {
+        self.sendNotification(message: "page.navigateStart", data:url.absoluteString)
+      } else {
+        self.sendNotification(message: "page.navigateFrameStart", data:url.absoluteString)
+      }
     }
     decisionHandler(.allow)
   }
   
   func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
-    self.sendNotification(message: "browser.terminated")
+    if isActive {
+      self.sendNotification(message: "browser.terminated")
+    }
   }
   
   /*************************************************************************************
