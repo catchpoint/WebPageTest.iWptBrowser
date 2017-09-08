@@ -174,6 +174,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
         } else {
           sendMessage(id:id, message:"ERROR", data:"Missing URL for navigation")
         }
+      case "osversion":
+        sendMessage(id: id, message: "OK", data:"\(UIDevice.current.systemVersion)")
       case "portrait":
         if isLandscape {
           isLandscape = false
@@ -185,6 +187,12 @@ class ViewController: UIViewController, WKNavigationDelegate {
           hasOrange = false
         } else {
           self.sendMessage(id:id, message:"ERROR")
+        }
+      case "setuseragent":
+        if data != nil {
+          setUserAgent(id:id, ua:data!)
+        } else {
+          sendMessage(id:id, message:"ERROR", data:"Missing User agent string")
         }
       case "screenshot": screenShot(id:id, small:true)
       case "screenshotbig": screenShot(id:id, small:false)
@@ -264,6 +272,15 @@ class ViewController: UIViewController, WKNavigationDelegate {
       webView!.isHidden = false
       self.hasOrange = false
       webView!.load(URLRequest(url: URL(string:url)!))
+      sendMessage(id:id, message:"OK")
+    } else {
+      sendMessage(id:id, message:"ERROR", data:"Browser not started")
+    }
+  }
+  
+  func setUserAgent(id:String, ua:String) {
+    if webView != nil {
+      webView!.customUserAgent = ua
       sendMessage(id:id, message:"OK")
     } else {
       sendMessage(id:id, message:"ERROR", data:"Browser not started")
