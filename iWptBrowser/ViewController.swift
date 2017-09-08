@@ -54,27 +54,11 @@ class ViewController: UIViewController, WKNavigationDelegate {
                   "body {background-color: white; margin: 0;}\n" +
                   "</style>\n" +
                   "</head>\n" +
-                  "<body><div id='wptorange' style='position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: #DE640D'></div></body>\n" +
+                  "<body></body>\n" +
                   "</html>"
-  let showOrange =  "(function() {" +
-                    "var wptDiv = document.createElement('div');" +
-                    "wptDiv.id = 'wptorange';" +
-                    "wptDiv.style.position = 'absolute';" +
-                    "wptDiv.style.top = '0';" +
-                    "wptDiv.style.left = '0';" +
-                    "wptDiv.style.right = '0';" +
-                    "wptDiv.style.bottom = '0';" +
-                    "wptDiv.style.zIndex = '2147483647';" +
-                    "wptDiv.style.backgroundColor = '#DE640D';" +
-                    "document.body.appendChild(wptDiv);" +
-                    "})();"
-  let hideOrange =  "(function() {" +
-                    "var wptDiv = document.getElementById('wptorange');" +
-                    "wptDiv.parentNode.removeChild(wptDiv);" +
-                    "})();"
   
   func log(_ message: String) {
-    //NSLog("iWptBrowser (\(self.timestamp())): \(message.replacingOccurrences(of: "\t", with: " ").replacingOccurrences(of: "\n", with: ""))")
+    NSLog("iWptBrowser (\(self.timestamp())): \(message.replacingOccurrences(of: "\t", with: " ").replacingOccurrences(of: "\n", with: ""))")
   }
   
   override func viewDidLoad() {
@@ -157,10 +141,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
               }
             case "removeorange", "hideorange", "andwait":
               if hasOrange && webView != nil {
+                webView!.isHidden = false
                 hasOrange = false
-                self.webView!.evaluateJavaScript(self.hideOrange) { (result, error) in
-                  self.log("Orange screen removed")
-                }
               }
             default:
               self.log("Unknown command option: \(messageParts[i])")
@@ -199,11 +181,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
         }
       case "removeorange", "hideorange":
         if hasOrange && webView != nil {
+          webView!.isHidden = false
           hasOrange = false
-          self.webView!.evaluateJavaScript(self.hideOrange) { (result, error) in
-            self.log("Orange screen removed")
-            self.sendMessage(id:id, message:"OK")
-          }
         } else {
           self.sendMessage(id:id, message:"ERROR")
         }
@@ -240,10 +219,12 @@ class ViewController: UIViewController, WKNavigationDelegate {
   func startBrowser(id:String) {
     UIScreen.main.brightness = 0.0
     closeWebView()
+    self.view.backgroundColor = UIColor(red: 222.0/255.0, green: 100.0/255.0, blue: 13.0/255.0, alpha: 1.0)
     startTime = DispatchTime.now()
     webView = WKWebView()
     webView!.frame = self.view.bounds
     self.view.addSubview(webView!)
+    webView!.isHidden = true
     webView!.loadHTMLString(startPage, baseURL: URL(string: "http://www.webpagetest.org"))
     hasOrange = true
     webView!.navigationDelegate = self
@@ -255,6 +236,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
   }
   
   func closeWebView() {
+    self.view.backgroundColor = UIColor.black
     if webView != nil {
       webView!.navigationDelegate = nil
       webView!.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
@@ -279,6 +261,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
         url = "http://" + url
       }
       title = "Loading..."
+      webView!.isHidden = false
+      self.hasOrange = false
       webView!.load(URLRequest(url: URL(string:url)!))
       sendMessage(id:id, message:"OK")
     } else {
@@ -288,10 +272,9 @@ class ViewController: UIViewController, WKNavigationDelegate {
   
   func addOrange(id:String) {
     if webView != nil {
+      webView!.isHidden = true
       hasOrange = true
-      webView!.evaluateJavaScript(showOrange) { (result, error) in
-        self.sendMessage(id:id, message:"OK")
-      }
+      self.sendMessage(id:id, message:"OK")
     } else {
       sendMessage(id:id, message:"ERROR", data:"Browser not started")
     }
@@ -488,17 +471,10 @@ class ViewController: UIViewController, WKNavigationDelegate {
     let url = navigationAction.request.url!
     if navigationAction.targetFrame == nil || navigationAction.targetFrame!.isMainFrame {
       self.sendNotification(message: "page.navigateStart", data:url.absoluteString)
-      if hasOrange {
-        webView.evaluateJavaScript(hideOrange) { (result, error) in
-          decisionHandler(.allow)
-        }
-      } else {
-        decisionHandler(.allow)
-      }
     } else {
       self.sendNotification(message: "page.navigateFrameStart", data:url.absoluteString)
-      decisionHandler(.allow)
     }
+    decisionHandler(.allow)
   }
   
   func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
