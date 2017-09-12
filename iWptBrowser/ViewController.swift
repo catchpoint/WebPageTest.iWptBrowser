@@ -405,7 +405,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
         let file = fopen(self.videoUrl!.path, "r")
         if file != nil {
           var dataSent = 0
-          let chunkSize = 4096
+          let chunkSize = 8192
           let readBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: chunkSize)
           var done = false
           self.sendMessageSync(id: "", message: "StartVideo", data: "\(filesize)")
