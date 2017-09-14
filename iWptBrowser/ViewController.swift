@@ -40,10 +40,11 @@ extension UINavigationController {
   }}
 
 class ViewController: UIViewController, WKNavigationDelegate {
-  var startTime = DispatchTime.now()
+  var startTime = Date().timeIntervalSinceReferenceDate
   var webView: WKWebView?
   var clientSocket:Socket?
   var videoCapture:ASScreenRecorder?
+  var videoTimer:Timer?
   var videoUrl: URL?
   var buffer_in = ""
   var hasOrange = false
@@ -85,9 +86,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
   }
 
   func timestamp() -> Double {
-    let now = DispatchTime.now()
-    let nanoTime = now.uptimeNanoseconds - startTime.uptimeNanoseconds
-    let elapsed = Double(nanoTime / 100) / 1_000_000.0
+    let now = Date().timeIntervalSinceReferenceDate
+    let elapsed = Double(round((now - startTime) * 1_000_000) / 1_000_000)
     return elapsed
   }
 
@@ -212,6 +212,21 @@ class ViewController: UIViewController, WKNavigationDelegate {
     }
   }
   
+  func clientDisconnected() {
+    // clean up if we were capturing video and had a browser loaded
+    stopVideoTimer()
+    if videoCapture != nil {
+      videoCapture!.stopRecording() {
+        self.videoCapture = nil
+        self.deleteVideo()
+      }
+    }
+    closeWebView()
+    hasOrange = false
+    isActive = false
+    title = "iWptBrowser"
+  }
+  
   /*************************************************************************************
                                   browser operations
    *************************************************************************************/
@@ -229,7 +244,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
     UIScreen.main.brightness = 0.0
     closeWebView()
     self.view.backgroundColor = UIColor(red: 222.0/255.0, green: 100.0/255.0, blue: 13.0/255.0, alpha: 1.0)
-    startTime = DispatchTime.now()
+    startTime = Date().timeIntervalSinceReferenceDate
     webView = WKWebView()
     webView!.frame = self.view.bounds
     self.view.addSubview(webView!)
@@ -366,19 +381,42 @@ class ViewController: UIViewController, WKNavigationDelegate {
    *************************************************************************************/
   func startVideo(id:String) {
     if videoCapture == nil {
+      stopVideoTimer()
       deleteVideo()
       videoCapture = ASScreenRecorder()
       videoCapture!.videoURL = videoUrl
       videoCapture!.bitrate = 8000000
       videoCapture!.scale = 1.0
       videoCapture!.startRecording()
+      // Limit video recording to 30 minutes to make sure we don't chew up ALL of the storage
+      videoTimer = Timer.scheduledTimer(timeInterval: 1800, target: self, selector: #selector(self.videoTimerFired), userInfo: nil, repeats: false)
       sendMessage(id:id, message:"OK")
     } else {
       sendMessage(id:id, message:"ERROR")
     }
   }
   
+  @objc func videoTimerFired() {
+    self.log("Video timer fired, stopping recording")
+    stopVideoTimer()
+    if videoCapture != nil {
+      videoCapture!.stopRecording() {
+        self.videoCapture = nil
+      }
+    }
+  }
+  
+  func stopVideoTimer() {
+    if videoTimer != nil {
+      if videoTimer!.isValid {
+        videoTimer!.invalidate()
+      }
+      videoTimer = nil
+    }
+  }
+  
   func stopVideo(id:String) {
+    stopVideoTimer()
     if videoCapture != nil {
       videoCapture!.stopRecording() {
         self.videoCapture = nil
@@ -636,6 +674,9 @@ class ViewController: UIViewController, WKNavigationDelegate {
     } while cont
     socket.close()
     self.log("\(id): Socket closed")
+    DispatchQueue.main.async {
+      self.clientDisconnected()
+    }
   }
   
   func receivedRawData(id:Int, str:String) {
