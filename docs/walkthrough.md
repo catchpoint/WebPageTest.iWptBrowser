@@ -18,7 +18,7 @@
 1. Open the project in XCode
 1. Select the attached device as the debugging target
     * ![configurator](images/target.png)
-1. Click the play button to buld the app, install it on the device and launch it
+1. Click the play button to build the app, install it on the device and launch it
     * This will also register the device to your developer account which is necessary for testing
 1. Assuming the app built correctly and launched on the device, chick the stop button to stop the app
 1. Create an Archive build for installing on the device (only need to do this once, the built .ipa can be used for all devices)
@@ -59,5 +59,5 @@ Running in single-app mode is optional but it will automatically re-start iWptBr
     * ![single-app](images/single-app.png)
 1. Select the iWptBrowser app
 
-## PROFIT! (Congratiolations, you are done)
+## PROFIT! (Congratulations, you are done)
 The same process needs to be repeated for each device with the exception of building a new archive.  If the devices are already registered to your developer account then you can also skip the step of running the app from XCode (it's just done since XCode takes care of automatically registering and provisioning the device).
