@@ -42,7 +42,7 @@
 1. Drag-and-drop your iWptBrowser.ipa archive build into the device apps window (and choose to overwrite the existing install)
     * ![install](images/install.png)
 
-## Test to agent
+## Test the agent
 1. Disconnect the device from the Mac
 1. Connect the device to the test machine that will be driving the testing
     * Setup instructions are available [here](https://github.com/WPO-Foundation/wptagent/blob/master/docs/install.md)
