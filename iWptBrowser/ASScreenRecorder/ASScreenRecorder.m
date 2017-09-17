@@ -191,7 +191,7 @@
             videoTransform = CGAffineTransformMakeRotation(-M_PI_2);
             break;
         case UIInterfaceOrientationLandscapeRight:
-            videoTransform = CGAffineTransformMakeRotation(M_PI_2);
+            videoTransform = CGAffineTransformMakeRotation(-M_PI_2);
             break;
         case UIInterfaceOrientationPortraitUpsideDown:
             //videoTransform = CGAffineTransformMakeRotation(M_PI);

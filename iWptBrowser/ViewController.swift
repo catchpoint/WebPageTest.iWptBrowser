@@ -94,7 +94,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
   open override var supportedInterfaceOrientations: UIInterfaceOrientationMask{
     get {
       if self.isLandscape {
-        return .landscapeLeft
+        return .landscapeRight
       } else {
         return .portraitUpsideDown
       }
@@ -169,6 +169,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
           isLandscape = true
           UIViewController.attemptRotationToDeviceOrientation()
         }
+        sendMessage(id: id, message: "OK")
       case "navigate":
         if data != nil {
           navigate(id:id, to:data!)
@@ -182,6 +183,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
           isLandscape = false
           UIViewController.attemptRotationToDeviceOrientation()
         }
+        sendMessage(id: id, message: "OK")
       case "removeorange", "hideorange":
         if hasOrange && webView != nil {
           webView!.isHidden = false
