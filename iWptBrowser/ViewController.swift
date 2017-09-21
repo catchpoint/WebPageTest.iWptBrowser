@@ -327,8 +327,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
           returned = "\(error!.localizedDescription)"
         }
         if result != nil {
-          let type = type(of:result!)
-          self.log("\(type): \(result!)")
+          let resultType = type(of:result!)
+          self.log("\(resultType): \(result!)")
           let is_json = JSONSerialization.isValidJSONObject(result!)
           if is_json {
             do {
@@ -623,7 +623,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
         self.log(">> \(message)")
       } else {
         let end = message.index(message.startIndex, offsetBy:200)
-        self.log(">> \(message.substring(to: end)) ...")
+        self.log(">> \(message[..<end]) ...")
       }
       do {
         try clientSocket!.write(from:message)

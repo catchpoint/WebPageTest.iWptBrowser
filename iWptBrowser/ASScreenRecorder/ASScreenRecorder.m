@@ -36,6 +36,7 @@
     dispatch_semaphore_t _pixelAppendSemaphore;
     
     CGSize _viewSize;
+    UIInterfaceOrientation _appOrientation;
   
     CGColorSpaceRef _rgbColorSpace;
     CVPixelBufferPoolRef _outputBufferPool;
@@ -56,8 +57,9 @@
 {
     self = [super init];
     if (self) {
+        _appOrientation = [UIApplication sharedApplication].statusBarOrientation;
         _viewSize = [UIApplication sharedApplication].delegate.window.bounds.size;
-        if (UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) {
+        if (UIInterfaceOrientationIsLandscape(_appOrientation)) {
           // Swap the width and height to get the unrotated dimensions
           CGFloat tmp = _viewSize.height;
           _viewSize.height = _viewSize.width;
@@ -186,16 +188,10 @@
 - (CGAffineTransform)videoTransformForDeviceOrientation
 {
     CGAffineTransform videoTransform;
-    switch ([UIApplication sharedApplication].statusBarOrientation) {
+    switch (_appOrientation) {
         case UIInterfaceOrientationLandscapeLeft:
-            videoTransform = CGAffineTransformMakeRotation(-M_PI_2);
-            break;
         case UIInterfaceOrientationLandscapeRight:
             videoTransform = CGAffineTransformMakeRotation(-M_PI_2);
-            break;
-        case UIInterfaceOrientationPortraitUpsideDown:
-            //videoTransform = CGAffineTransformMakeRotation(M_PI);
-            videoTransform = CGAffineTransformIdentity;
             break;
         default:
             videoTransform = CGAffineTransformIdentity;
@@ -302,7 +298,7 @@
         
         CGFloat width = _viewSize.width;
         CGFloat height = _viewSize.height;
-        if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8") && UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) {
+        if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8") && UIInterfaceOrientationIsLandscape(_appOrientation)) {
             width  = MAX(_viewSize.width, _viewSize.height);
             height = MIN(_viewSize.width, _viewSize.height);
         }
@@ -359,11 +355,11 @@
     CGAffineTransform flipVertical = CGAffineTransformMake(1, 0, 0, -1, 0, _viewSize.height);
     CGContextConcatCTM(bitmapContext, flipVertical);
     
-    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8") && UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) {
+    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8") && UIInterfaceOrientationIsLandscape(_appOrientation)) {
         CGContextRotateCTM(bitmapContext, M_PI_2);
         CGContextTranslateCTM(bitmapContext, 0, -_viewSize.width);
     }
-    if(SYSTEM_VERSION_LESS_THAN(@"8") && [UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationLandscapeLeft) {
+    if(SYSTEM_VERSION_LESS_THAN(@"8") && _appOrientation == UIInterfaceOrientationLandscapeLeft) {
         CGContextRotateCTM(bitmapContext, M_PI);
     }
     
