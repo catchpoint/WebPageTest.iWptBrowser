@@ -663,6 +663,9 @@ class ViewController: UIViewController, WKNavigationDelegate {
     } catch let err {
       self.log("\(id): Socket setup error: \(err)")
     }
+    var one: Int = 1
+    let size = UInt32(MemoryLayout.size(ofValue: one))
+    setsockopt(socket.socketfd, IPPROTO_TCP, TCP_NODELAY, &one, size)
     repeat {
       do {
         let str = try socket.readString()
