@@ -50,6 +50,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
   var hasOrange = false
   var isLandscape = false
   var isActive = false
+  let vpn = VPN(localPort:19220, remotePort:19221)
   let startPage = "<html>\n" +
                   "<head>\n" +
                   "<style>\n" +
@@ -157,6 +158,15 @@ class ViewController: UIViewController, WKNavigationDelegate {
         sendMessage(id: id, message: "OK", data:"\(UIDevice.current.batteryLevel)")
       case "clearcache": clearCache(id:id)
       case "closebrowser", "stopbrowser": closeBrowser(id:id)
+      case "connectvpn", "connecttether":
+        if vpn.connect() {
+          sendMessage(id:id, message:"OK")
+        } else {
+          sendMessage(id:id, message:"ERROR")
+        }
+      case "disconnectvpn", "disconnecttether":
+        vpn.disconnect()
+        sendMessage(id:id, message:"OK")
       case "exec":
         if data != nil {
           execScript(id:id, script:data!)

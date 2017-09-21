@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F990E1C1F74162E003789FE /* VPN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F990E1B1F74162E003789FE /* VPN.swift */; };
+		0F990E241F743F9B003789FE /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F990E231F743F9B003789FE /* PacketTunnelProvider.swift */; };
+		0F990E291F743F9B003789FE /* tether.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 0F990E211F743F9B003789FE /* tether.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		0F990E331F74435C003789FE /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F990E301F74435C003789FE /* Socket.swift */; };
+		0F990E341F74435C003789FE /* SocketProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F990E311F74435C003789FE /* SocketProtocols.swift */; };
+		0F990E351F74435C003789FE /* SocketUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F990E321F74435C003789FE /* SocketUtils.swift */; };
+		0F990E3F1F7449E8003789FE /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F990E3E1F7449E8003789FE /* NetworkExtension.framework */; };
+		0F990E401F744A0A003789FE /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F990E3E1F7449E8003789FE /* NetworkExtension.framework */; };
 		0FA75D621F5B4B72005E914B /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA75D5F1F5B4B72005E914B /* Socket.swift */; };
 		0FA75D631F5B4B72005E914B /* SocketProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA75D601F5B4B72005E914B /* SocketProtocols.swift */; };
 		0FA75D641F5B4B72005E914B /* SocketUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA75D611F5B4B72005E914B /* SocketUtils.swift */; };
@@ -18,7 +26,41 @@
 		0FECFAAF1F5719BD00E18B59 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0FECFAAD1F5719BD00E18B59 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		0F990E271F743F9B003789FE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0FECFA991F5719BC00E18B59 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0F990E201F743F9B003789FE;
+			remoteInfo = tether;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0F990E2D1F743F9B003789FE /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				0F990E291F743F9B003789FE /* tether.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		0F990E1B1F74162E003789FE /* VPN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPN.swift; sourceTree = "<group>"; };
+		0F990E211F743F9B003789FE /* tether.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = tether.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		0F990E231F743F9B003789FE /* PacketTunnelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketTunnelProvider.swift; sourceTree = "<group>"; };
+		0F990E251F743F9B003789FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0F990E261F743F9B003789FE /* tether.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = tether.entitlements; sourceTree = "<group>"; };
+		0F990E2E1F7440F2003789FE /* iWptBrowser.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iWptBrowser.entitlements; sourceTree = "<group>"; };
+		0F990E301F74435C003789FE /* Socket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
+		0F990E311F74435C003789FE /* SocketProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketProtocols.swift; sourceTree = "<group>"; };
+		0F990E321F74435C003789FE /* SocketUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketUtils.swift; sourceTree = "<group>"; };
+		0F990E3E1F7449E8003789FE /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		0FA75D5F1F5B4B72005E914B /* Socket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Socket.swift; path = Socket/Socket.swift; sourceTree = "<group>"; };
 		0FA75D601F5B4B72005E914B /* SocketProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SocketProtocols.swift; path = Socket/SocketProtocols.swift; sourceTree = "<group>"; };
 		0FA75D611F5B4B72005E914B /* SocketUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SocketUtils.swift; path = Socket/SocketUtils.swift; sourceTree = "<group>"; };
@@ -35,16 +77,54 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0F990E1E1F743F9B003789FE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F990E401F744A0A003789FE /* NetworkExtension.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0FECFA9E1F5719BC00E18B59 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0F990E3F1F7449E8003789FE /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0F990E221F743F9B003789FE /* tether */ = {
+			isa = PBXGroup;
+			children = (
+				0F990E2F1F74429A003789FE /* Socket */,
+				0F990E231F743F9B003789FE /* PacketTunnelProvider.swift */,
+				0F990E251F743F9B003789FE /* Info.plist */,
+				0F990E261F743F9B003789FE /* tether.entitlements */,
+			);
+			path = tether;
+			sourceTree = "<group>";
+		};
+		0F990E2F1F74429A003789FE /* Socket */ = {
+			isa = PBXGroup;
+			children = (
+				0F990E301F74435C003789FE /* Socket.swift */,
+				0F990E311F74435C003789FE /* SocketProtocols.swift */,
+				0F990E321F74435C003789FE /* SocketUtils.swift */,
+			);
+			path = Socket;
+			sourceTree = "<group>";
+		};
+		0F990E361F744955003789FE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0F990E3E1F7449E8003789FE /* NetworkExtension.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		0FA75D5E1F5B4B24005E914B /* Socket */ = {
 			isa = PBXGroup;
 			children = (
@@ -69,7 +149,9 @@
 			isa = PBXGroup;
 			children = (
 				0FECFAA31F5719BD00E18B59 /* iWptBrowser */,
+				0F990E221F743F9B003789FE /* tether */,
 				0FECFAA21F5719BD00E18B59 /* Products */,
+				0F990E361F744955003789FE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -77,6 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				0FECFAA11F5719BD00E18B59 /* iWptBrowser.app */,
+				0F990E211F743F9B003789FE /* tether.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -87,11 +170,13 @@
 				0FA75D5E1F5B4B24005E914B /* Socket */,
 				0FECFAA41F5719BD00E18B59 /* AppDelegate.swift */,
 				0FECFAA61F5719BD00E18B59 /* ViewController.swift */,
+				0F990E1B1F74162E003789FE /* VPN.swift */,
 				0FECFAA81F5719BD00E18B59 /* Main.storyboard */,
 				0FECFAAB1F5719BD00E18B59 /* Assets.xcassets */,
 				0FECFAAD1F5719BD00E18B59 /* LaunchScreen.storyboard */,
 				0FECFAB01F5719BD00E18B59 /* Info.plist */,
 				0FA75D651F5B70C5005E914B /* ASScreenRecorder */,
+				0F990E2E1F7440F2003789FE /* iWptBrowser.entitlements */,
 			);
 			path = iWptBrowser;
 			sourceTree = "<group>";
@@ -99,6 +184,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0F990E201F743F9B003789FE /* tether */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0F990E2A1F743F9B003789FE /* Build configuration list for PBXNativeTarget "tether" */;
+			buildPhases = (
+				0F990E1D1F743F9B003789FE /* Sources */,
+				0F990E1E1F743F9B003789FE /* Frameworks */,
+				0F990E1F1F743F9B003789FE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = tether;
+			productName = tether;
+			productReference = 0F990E211F743F9B003789FE /* tether.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		0FECFAA01F5719BC00E18B59 /* iWptBrowser */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0FECFAB31F5719BD00E18B59 /* Build configuration list for PBXNativeTarget "iWptBrowser" */;
@@ -106,10 +208,12 @@
 				0FECFA9D1F5719BC00E18B59 /* Sources */,
 				0FECFA9E1F5719BC00E18B59 /* Frameworks */,
 				0FECFA9F1F5719BC00E18B59 /* Resources */,
+				0F990E2D1F743F9B003789FE /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				0F990E281F743F9B003789FE /* PBXTargetDependency */,
 			);
 			name = iWptBrowser;
 			productName = iWptBrowser;
@@ -122,15 +226,42 @@
 		0FECFA991F5719BC00E18B59 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0820;
+				LastSwiftUpdateCheck = 0900;
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "WebPageTest LLC";
 				TargetAttributes = {
+					0F990E201F743F9B003789FE = {
+						CreatedOnToolsVersion = 9.0;
+						DevelopmentTeam = NWBL8UVJPY;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+							com.apple.NetworkExtensions.iOS = {
+								enabled = 1;
+							};
+							com.apple.VPNLite = {
+								enabled = 1;
+							};
+						};
+					};
 					0FECFAA01F5719BC00E18B59 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = NWBL8UVJPY;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+							com.apple.NetworkExtensions.iOS = {
+								enabled = 1;
+							};
+							com.apple.VPNLite = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -148,11 +279,19 @@
 			projectRoot = "";
 			targets = (
 				0FECFAA01F5719BC00E18B59 /* iWptBrowser */,
+				0F990E201F743F9B003789FE /* tether */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0F990E1F1F743F9B003789FE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0FECFA9F1F5719BC00E18B59 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -166,6 +305,17 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0F990E1D1F743F9B003789FE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F990E331F74435C003789FE /* Socket.swift in Sources */,
+				0F990E341F74435C003789FE /* SocketProtocols.swift in Sources */,
+				0F990E351F74435C003789FE /* SocketUtils.swift in Sources */,
+				0F990E241F743F9B003789FE /* PacketTunnelProvider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0FECFA9D1F5719BC00E18B59 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -173,6 +323,7 @@
 				0FECFAA71F5719BD00E18B59 /* ViewController.swift in Sources */,
 				0FECFAA51F5719BD00E18B59 /* AppDelegate.swift in Sources */,
 				0FA75D641F5B4B72005E914B /* SocketUtils.swift in Sources */,
+				0F990E1C1F74162E003789FE /* VPN.swift in Sources */,
 				0FA75D6E1F5C54C0005E914B /* ASScreenRecorder.m in Sources */,
 				0FA75D631F5B4B72005E914B /* SocketProtocols.swift in Sources */,
 				0FA75D621F5B4B72005E914B /* Socket.swift in Sources */,
@@ -180,6 +331,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0F990E281F743F9B003789FE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0F990E201F743F9B003789FE /* tether */;
+			targetProxy = 0F990E271F743F9B003789FE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		0FECFAA81F5719BD00E18B59 /* Main.storyboard */ = {
@@ -201,6 +360,50 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0F990E2B1F743F9B003789FE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = tether/tether.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = NWBL8UVJPY;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = tether/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.webpagetest.browser.tether;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0F990E2C1F743F9B003789FE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = tether/tether.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = NWBL8UVJPY;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = tether/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.webpagetest.browser.tether;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		0FECFAB11F5719BD00E18B59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -309,12 +512,15 @@
 		0FECFAB41F5719BD00E18B59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = iWptBrowser/iWptBrowser.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = NWBL8UVJPY;
 				INFOPLIST_FILE = iWptBrowser/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.webpagetest.iWptBrowser;
+				PRODUCT_BUNDLE_IDENTIFIER = org.webpagetest.browser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "iWptBrowser/ASScreenRecorder/iWptBrowser-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -326,12 +532,15 @@
 		0FECFAB51F5719BD00E18B59 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = iWptBrowser/iWptBrowser.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = NWBL8UVJPY;
 				INFOPLIST_FILE = iWptBrowser/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.webpagetest.iWptBrowser;
+				PRODUCT_BUNDLE_IDENTIFIER = org.webpagetest.browser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "iWptBrowser/ASScreenRecorder/iWptBrowser-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
@@ -342,6 +551,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0F990E2A1F743F9B003789FE /* Build configuration list for PBXNativeTarget "tether" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0F990E2B1F743F9B003789FE /* Debug */,
+				0F990E2C1F743F9B003789FE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		0FECFA9C1F5719BC00E18B59 /* Build configuration list for PBXProject "iWptBrowser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
