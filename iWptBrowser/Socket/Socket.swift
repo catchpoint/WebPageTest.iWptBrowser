@@ -548,9 +548,10 @@ public class Socket: SocketReader, SocketWriter {
 				throw Error(code: Socket.SOCKET_ERR_BAD_SIGNATURE_PARAMETERS, reason: "Pathname supplied is too long.")
 			}
 
+      let tempAddr = remoteAddr
 			_ = withUnsafeMutablePointer(to: &remoteAddr.sun_path.0) { ptr in
 
-				let buf = UnsafeMutableBufferPointer(start: ptr, count: MemoryLayout.size(ofValue: remoteAddr.sun_path))
+				let buf = UnsafeMutableBufferPointer(start: ptr, count: MemoryLayout.size(ofValue: tempAddr.sun_path))
 				for (i, b) in path.utf8.enumerated() {
 					buf[i] = Int8(b)
 				}
@@ -804,14 +805,12 @@ public class Socket: SocketReader, SocketWriter {
 
 			// Ensure minimum buffer size...
 			if readBufferSize < Socket.SOCKET_MINIMUM_READ_BUFFER_SIZE {
-
 				readBufferSize = Socket.SOCKET_MINIMUM_READ_BUFFER_SIZE
 			}
 
 			if readBufferSize != oldValue {
-
-				readBuffer.deinitialize()
-				readBuffer.deallocate(capacity: oldValue)
+        readBuffer.deinitialize(count: oldValue)
+				readBuffer.deallocate()
 				readBuffer = UnsafeMutablePointer<CChar>.allocate(capacity: readBufferSize)
 				readBuffer.initialize(to:0)
 			}
@@ -1329,8 +1328,8 @@ public class Socket: SocketReader, SocketWriter {
         }
 
         // Destroy and free the readBuffer...
-        self.readBuffer.deinitialize()
-        self.readBuffer.deallocate(capacity: self.readBufferSize)
+      self.readBuffer.deinitialize(count: self.readBufferSize)
+        self.readBuffer.deallocate()
     }
 
 	// MARK: Public Functions
@@ -1971,7 +1970,8 @@ public class Socket: SocketReader, SocketWriter {
 		// Now, do the connection using the supplied address...
 		let (addrPtr, addrLen) = try signature.unixAddress()
 		defer {
-			addrPtr.deallocate(capacity: addrLen)
+      addrPtr.deinitialize(count: addrLen)
+			addrPtr.deallocate()
 		}
 
 		let rc = addrPtr.withMemoryRebound(to: sockaddr.self, capacity: 1) {
@@ -2378,7 +2378,8 @@ public class Socket: SocketReader, SocketWriter {
 		// Now, do the connection using the supplied address from the signature...
 		let (addrPtr, addrLen) = try signature.unixAddress()
 		defer {
-			addrPtr.deallocate(capacity: addrLen)
+      addrPtr.deinitialize(count: addrLen)
+			addrPtr.deallocate()
 		}
 
 		let rc = addrPtr.withMemoryRebound(to: sockaddr.self, capacity: 1) {

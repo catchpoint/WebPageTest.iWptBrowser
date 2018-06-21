@@ -50,7 +50,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
   var hasOrange = false
   var isLandscape = false
   var isActive = false
-  let vpn = VPN(localPort:19220, remotePort:19221)
+  //let vpn = VPN(localPort:19220, remotePort:19221)
   let startPage = "<html>\n" +
                   "<head>\n" +
                   "<style>\n" +
@@ -158,6 +158,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
         sendMessage(id: id, message: "OK", data:"\(UIDevice.current.batteryLevel)")
       case "clearcache": clearCache(id:id)
       case "closebrowser", "stopbrowser": closeBrowser(id:id)
+/*
       case "connectvpn", "connecttether":
         if vpn.connect() {
           sendMessage(id:id, message:"OK")
@@ -167,6 +168,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
       case "disconnectvpn", "disconnecttether":
         vpn.disconnect()
         sendMessage(id:id, message:"OK")
+*/
       case "exec":
         if data != nil {
           execScript(id:id, script:data!)
@@ -347,7 +349,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
             } catch {
             }
           }
-          if returned.characters.count == 0 {
+          if returned.count == 0 {
             returned = "\(result!)"
           }
         }
@@ -587,7 +589,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
     let queue = DispatchQueue(label: "org.webpagetest.message")
     queue.async {
       var str = "\(timestamp)\t\(id)"
-      if id.characters.count > 0 {
+      if id.count > 0 {
         str += ":"
       }
       var msg = message
@@ -597,7 +599,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
         rawData = rawData.base64Encoded()!
       }
       str += msg
-      if rawData.characters.count > 0 {
+      if rawData.count > 0 {
         str += "\t"
         str += rawData
       }
@@ -609,7 +611,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
   func sendMessageSync(id:String, message:String, data:String) {
     let timestamp = self.timestamp()
     var str = "\(timestamp)\t\(id)"
-    if id.characters.count > 0 {
+    if id.count > 0 {
       str += ":"
     }
     var msg = message
@@ -619,7 +621,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
       rawData = rawData.base64Encoded()!
     }
     str += msg
-    if rawData.characters.count > 0 {
+    if rawData.count > 0 {
       str += "\t"
       str += rawData
     }
@@ -629,7 +631,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
 
   func sendMessageAsync(_ message:String) {
     if clientSocket != nil {
-      if message.characters.count < 200 {
+      if message.count < 200 {
         self.log(">> \(message)")
       } else {
         let end = message.index(message.startIndex, offsetBy:200)
@@ -695,9 +697,9 @@ class ViewController: UIViewController, WKNavigationDelegate {
   }
   
   func receivedRawData(id:Int, str:String) {
-    for ch in str.characters {
+    for ch in str {
       if ch == "\n" || ch == "\r" || ch == "\r\n" {
-        if buffer_in.characters.count > 0 {
+        if buffer_in.count > 0 {
           let message = self.buffer_in
           self.buffer_in = ""
           DispatchQueue.main.async {

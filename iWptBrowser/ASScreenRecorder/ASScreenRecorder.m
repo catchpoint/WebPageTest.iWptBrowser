@@ -220,10 +220,10 @@
 - (void)completeRecordingSession:(VideoCompletionBlock)completionBlock;
 {
     dispatch_async(_render_queue, ^{
-        dispatch_sync(_append_pixelBuffer_queue, ^{
+        dispatch_sync(self->_append_pixelBuffer_queue, ^{
             
-            [_videoWriterInput markAsFinished];
-            [_videoWriter finishWritingWithCompletionHandler:^{
+            [self->_videoWriterInput markAsFinished];
+            [self->_videoWriter finishWritingWithCompletionHandler:^{
                 
                 void (^completion)(void) = ^() {
                     [self cleanup];
@@ -236,12 +236,12 @@
                     completion();
                 } else {
                   [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
-                    [PHAssetChangeRequest creationRequestForAssetFromVideoAtFileURL:_videoWriter.outputURL];
+                    [PHAssetChangeRequest creationRequestForAssetFromVideoAtFileURL:self->_videoWriter.outputURL];
                   } completionHandler:^(BOOL success, NSError *error) {
                     if (error) {
                       NSLog(@"Error copying video to camera roll:%@", [error localizedDescription]);
                     } else {
-                      [self removeTempFilePath:_videoWriter.outputURL.path];
+                      [self removeTempFilePath:self->_videoWriter.outputURL.path];
                       completion();
                     }
                   }];
@@ -270,16 +270,16 @@
         return;
     }
     dispatch_async(_render_queue, ^{
-        if (![_videoWriterInput isReadyForMoreMediaData]) return;
+        if (![self->_videoWriterInput isReadyForMoreMediaData]) return;
         
         if (self.pauseResumeTimeRanges.count % 2 != 0) {
-            [self.pauseResumeTimeRanges addObject:@(_displayLink.timestamp)];
+            [self.pauseResumeTimeRanges addObject:@(self->_displayLink.timestamp)];
         }
         
         if (!self.firstTimeStamp) {
-            self.firstTimeStamp = _displayLink.timestamp;
+            self.firstTimeStamp = self->_displayLink.timestamp;
         }
-        CFTimeInterval elapsed = (_displayLink.timestamp - self.firstTimeStamp);
+        CFTimeInterval elapsed = (self->_displayLink.timestamp - self.firstTimeStamp);
         if (self.pauseResumeTimeRanges.count) {
             for (int i = 0; i < self.pauseResumeTimeRanges.count; i += 2) {
                 double pausedTime = [self.pauseResumeTimeRanges[i] doubleValue];
@@ -296,11 +296,11 @@
             [self.delegate writeBackgroundFrameInContext:&bitmapContext];
         }
         
-        CGFloat width = _viewSize.width;
-        CGFloat height = _viewSize.height;
-        if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8") && UIInterfaceOrientationIsLandscape(_appOrientation)) {
-            width  = MAX(_viewSize.width, _viewSize.height);
-            height = MIN(_viewSize.width, _viewSize.height);
+        CGFloat width = self->_viewSize.width;
+        CGFloat height = self->_viewSize.height;
+        if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8") && UIInterfaceOrientationIsLandscape(self->_appOrientation)) {
+            width  = MAX(self->_viewSize.width, self->_viewSize.height);
+            height = MIN(self->_viewSize.width, self->_viewSize.height);
         }
 
         // draw each window into the context (other windows include UIKeyboard, UIAlert)
@@ -317,9 +317,9 @@
         // must not overwhelm the queue with pixelBuffers, therefore:
         // check if _append_pixelBuffer_queue is ready
         // if it’s not ready, release pixelBuffer and bitmapContext
-        if (dispatch_semaphore_wait(_pixelAppendSemaphore, DISPATCH_TIME_NOW) == 0) {
-            dispatch_async(_append_pixelBuffer_queue, ^{
-                BOOL success = [_avAdaptor appendPixelBuffer:pixelBuffer withPresentationTime:time];
+        if (dispatch_semaphore_wait(self->_pixelAppendSemaphore, DISPATCH_TIME_NOW) == 0) {
+            dispatch_async(self->_append_pixelBuffer_queue, ^{
+                BOOL success = [self->_avAdaptor appendPixelBuffer:pixelBuffer withPresentationTime:time];
                 if (!success) {
                     NSLog(@"Warning: Unable to write buffer to video");
                 }
@@ -327,7 +327,7 @@
                 CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
                 CVPixelBufferRelease(pixelBuffer);
                 
-                dispatch_semaphore_signal(_pixelAppendSemaphore);
+                dispatch_semaphore_signal(self->_pixelAppendSemaphore);
             });
         } else {
             CGContextRelease(bitmapContext);
@@ -335,7 +335,7 @@
             CVPixelBufferRelease(pixelBuffer);
         }
         
-        dispatch_semaphore_signal(_frameRenderingSemaphore);
+        dispatch_semaphore_signal(self->_frameRenderingSemaphore);
     });
 }
 

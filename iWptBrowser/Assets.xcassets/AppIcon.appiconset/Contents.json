@@ -101,6 +101,12 @@
       "idiom" : "ipad",
       "filename" : "icon_83.5pt2x.png",
       "scale" : "2x"
+    },
+    {
+      "size" : "1024x1024",
+      "idiom" : "ios-marketing",
+      "filename" : "icon_1024pt.png",
+      "scale" : "1x"
     }
   ],
   "info" : {

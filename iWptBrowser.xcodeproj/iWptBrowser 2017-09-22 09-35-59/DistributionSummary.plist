@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>iWptBrowser.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>armv7</string>
+				<string>arm64</string>
+			</array>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>C4310C87F6278DF0B89D49FE52A58679FE6556E9</string>
+				<key>dateExpires</key>
+				<string>7/20/18</string>
+				<key>type</key>
+				<string>iOS Development</string>
+			</dict>
+			<key>embeddedBinaries</key>
+			<array>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>C4310C87F6278DF0B89D49FE52A58679FE6556E9</string>
+						<key>dateExpires</key>
+						<string>7/20/18</string>
+						<key>type</key>
+						<string>iOS Development</string>
+					</dict>
+					<key>entitlements</key>
+					<dict>
+						<key>application-identifier</key>
+						<string>NWBL8UVJPY.org.webpagetest.browser.tether</string>
+						<key>com.apple.developer.networking.networkextension</key>
+						<array>
+							<string>packet-tunnel-provider</string>
+						</array>
+						<key>com.apple.developer.networking.vpn.api</key>
+						<array>
+							<string>allow-vpn</string>
+						</array>
+						<key>com.apple.developer.team-identifier</key>
+						<string>NWBL8UVJPY</string>
+						<key>com.apple.security.application-groups</key>
+						<array>
+							<string>group.org.webpagetest.iWptBrowser</string>
+						</array>
+						<key>get-task-allow</key>
+						<true/>
+						<key>keychain-access-groups</key>
+						<array>
+							<string>NWBL8UVJPY.com.apple.managed.vpn.shared</string>
+						</array>
+					</dict>
+					<key>name</key>
+					<string>tether.appex</string>
+					<key>profile</key>
+					<dict>
+						<key>UUID</key>
+						<string>bc9b8b8e-3ae6-4892-bfec-bfd21db4d20f</string>
+						<key>name</key>
+						<string>iOS Team Provisioning Profile: org.webpagetest.browser.tether</string>
+					</dict>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>NWBL8UVJPY</string>
+						<key>name</key>
+						<string>Patrick Meenan</string>
+					</dict>
+				</dict>
+			</array>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>NWBL8UVJPY.org.webpagetest.browser</string>
+				<key>com.apple.developer.networking.networkextension</key>
+				<array>
+					<string>packet-tunnel-provider</string>
+				</array>
+				<key>com.apple.developer.networking.vpn.api</key>
+				<array>
+					<string>allow-vpn</string>
+				</array>
+				<key>com.apple.developer.team-identifier</key>
+				<string>NWBL8UVJPY</string>
+				<key>get-task-allow</key>
+				<true/>
+				<key>keychain-access-groups</key>
+				<array>
+					<string>NWBL8UVJPY.com.apple.managed.vpn.shared</string>
+				</array>
+			</dict>
+			<key>name</key>
+			<string>iWptBrowser.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>4d961f37-11bf-4021-8194-c0c6b67ba316</string>
+				<key>name</key>
+				<string>iOS Team Provisioning Profile: org.webpagetest.browser</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>NWBL8UVJPY</string>
+				<key>name</key>
+				<string>Patrick Meenan</string>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>
