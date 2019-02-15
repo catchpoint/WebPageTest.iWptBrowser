@@ -209,6 +209,16 @@ class ViewController: UIViewController, WKNavigationDelegate {
         } else {
           sendMessage(id:id, message:"ERROR", data:"Missing User agent string")
         }
+      case "setcookie":
+        if data != nil {
+          if #available(iOS 11.0, *) {
+            setCookie(id:id, cookieData:data!)
+          } else {
+            sendMessage(id:id, message:"ERROR", data:"Cookies are only supported for iOS 11.0 and later")
+          }
+        } else {
+          sendMessage(id:id, message:"ERROR", data:"Missing cookie information")
+        }
       case "screenshot": screenShot(id:id, small:true)
       case "screenshotbig": screenShot(id:id, small:false)
       case "screenshotbigjpeg": screenShotJpeg(id:id, small:false)
@@ -313,6 +323,28 @@ class ViewController: UIViewController, WKNavigationDelegate {
   func setUserAgent(id:String, ua:String) {
     if webView != nil {
       webView!.customUserAgent = ua
+      sendMessage(id:id, message:"OK")
+    } else {
+      sendMessage(id:id, message:"ERROR", data:"Browser not started")
+    }
+  }
+
+  @available(iOS 11.0, *)
+  func setCookie(id:String, cookieData:String) {
+    if webView != nil {
+      let parts = cookieData.components(separatedBy: ";")
+      let domain = parts[0]
+      let name = parts[1]
+      let value = parts[2]
+
+      let cookie = HTTPCookie(properties: [
+        .domain: domain,
+        .path: "/",
+        .name: name,
+        .value: value,
+      ])!
+
+      webView!.configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
       sendMessage(id:id, message:"OK")
     } else {
       sendMessage(id:id, message:"ERROR", data:"Browser not started")
