@@ -395,7 +395,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
   func screenShot(id:String, small:Bool) {
     let image = captureScreen(small)
     if image != nil {
-      let png = UIImagePNGRepresentation(image!)
+      let png = image!.pngData()
       if png != nil {
         let encoded = png?.base64EncodedString()
         if encoded != nil {
@@ -410,7 +410,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
   func screenShotJpeg(id:String, small:Bool) {
     let image = captureScreen(small)
     if image != nil {
-      let png = UIImageJPEGRepresentation(image!, 0.75)
+      let png = image!.jpegData(compressionQuality: 0.75)
       if png != nil {
         let encoded = png?.base64EncodedString()
         if encoded != nil {

@@ -233,6 +233,7 @@
 					0F990E201F743F9B003789FE = {
 						CreatedOnToolsVersion = 9.0;
 						DevelopmentTeam = NWBL8UVJPY;
+						LastSwiftMigration = 1130;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Keychain = {
@@ -249,7 +250,7 @@
 					0FECFAA01F5719BC00E18B59 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = NWBL8UVJPY;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = 1130;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Keychain = {
@@ -270,6 +271,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -377,7 +379,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.webpagetest.browser.tether;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -399,7 +401,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.webpagetest.browser.tether;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -529,7 +531,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "iWptBrowser/ASScreenRecorder/iWptBrowser-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -548,7 +550,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "iWptBrowser/ASScreenRecorder/iWptBrowser-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
