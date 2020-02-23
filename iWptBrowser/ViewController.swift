@@ -269,8 +269,12 @@ class ViewController: UIViewController, WKNavigationDelegate {
     closeWebView()
     self.view.backgroundColor = UIColor(red: 222.0/255.0, green: 100.0/255.0, blue: 13.0/255.0, alpha: 1.0)
     startTime = Date().timeIntervalSinceReferenceDate
-    webView = WKWebView()
-    webView!.frame = self.view.bounds
+    let configuration = WKWebViewConfiguration()
+    configuration.allowsInlineMediaPlayback = true
+    if #available(iOS 10.0, *) {
+      configuration.mediaTypesRequiringUserActionForPlayback = .audio
+    }
+    webView = WKWebView(frame: self.view.bounds, configuration: configuration)
     self.view.addSubview(webView!)
     webView!.isHidden = true
     webView!.loadHTMLString(startPage, baseURL: URL(string: "http://www.webpagetest.org"))
