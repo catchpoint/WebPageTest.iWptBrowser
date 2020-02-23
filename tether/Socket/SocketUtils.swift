@@ -35,7 +35,7 @@ public extension sockaddr_storage {
 	///
 	/// - Returns: sockaddr
 	///
-	public func asAddr() -> sockaddr {
+  func asAddr() -> sockaddr {
 		
 		var temp = self
 		let addr = withUnsafePointer(to: &temp) {
@@ -50,7 +50,7 @@ public extension sockaddr_storage {
 	///
 	/// - Returns: sockaddr_in
 	///
-	public func asIPV4() -> sockaddr_in {
+  func asIPV4() -> sockaddr_in {
 		
 		var temp = self
 		let addr = withUnsafePointer(to: &temp) {
@@ -64,7 +64,7 @@ public extension sockaddr_storage {
 	///
 	/// - Returns: sockaddr_in6
 	///
-	public func asIPV6() -> sockaddr_in6 {
+  func asIPV6() -> sockaddr_in6 {
 		
 		var temp = self
 		let addr = withUnsafePointer(to: &temp) {
@@ -78,7 +78,7 @@ public extension sockaddr_storage {
 	///
 	/// - Returns: sockaddr_un
 	///
-	public func asUnix() -> sockaddr_un {
+  func asUnix() -> sockaddr_un {
 		
 		var temp = self
 		let addr = withUnsafePointer(to: &temp) {
@@ -97,7 +97,7 @@ public extension sockaddr_in {
 	///
 	/// - Returns: sockaddr
 	///
-	public func asAddr() -> sockaddr {
+  func asAddr() -> sockaddr {
 		
 		var temp = self
 		let addr = withUnsafePointer(to: &temp) {
@@ -116,7 +116,7 @@ public extension sockaddr_in6 {
 	///
 	/// - Returns: sockaddr
 	///
-	public func asAddr() -> sockaddr {
+  func asAddr() -> sockaddr {
 		
 		var temp = self
 		let addr = withUnsafePointer(to: &temp) {
@@ -135,7 +135,7 @@ public extension sockaddr_un {
 	///
 	/// - Returns: sockaddr
 	///
-	public func asAddr() -> sockaddr {
+  func asAddr() -> sockaddr {
 		
 		var temp = self
 		let addr = withUnsafePointer(to: &temp) {
